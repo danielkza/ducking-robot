@@ -1,5 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
+
+// Falta implementar a função remove_bomb()
+
 
 typedef struct {
     float x, y;
@@ -14,7 +19,7 @@ typedef struct {
 
 typedef struct {
     float modifier;
-    float remaining_time;
+    float remaining_update_time;
     vec2 position;
 } bomb_params;
 
@@ -44,8 +49,7 @@ void free_data(boat_params *boat, bomb_params **bombs, int bomb_count)
     }
 }
 
-int read_input(FILE *in, boat_params **boat_out, bomb_params ***bombs_out,
-               int *bomb_count_out)
+int read_input(FILE *in, boat_params **boat_out, bomb_params ***bombs_out, int *bomb_count_out)
 {
     boat_params *boat = NULL;
     bomb_params **bombs = NULL;
@@ -73,7 +77,7 @@ int read_input(FILE *in, boat_params **boat_out, bomb_params ***bombs_out,
             goto error;
 
         if(fscanf(in, "%f %f", &(bombs[i]->modifier),
-                               &(bombs[i]->remaining_time)) != 2)
+                               &(bombs[i]->remaining_update_time)) != 2)
         {
             goto error;
         }
@@ -115,7 +119,7 @@ int print_output(FILE *out, boat_params *boat, bomb_params **bombs, int bomb_cou
 
     int i;
     for(i = 0; i < bomb_count; i++) {
-        fprintf(out, "%f %f %f %f\n", bombs[i]->modifier, bombs[i]->remaining_time,
+        fprintf(out, "%f %f %f %f\n", bombs[i]->modifier, bombs[i]->remaining_update_time,
                 bombs[i]->position.x, bombs[i]->position.y);
     }
 
@@ -123,16 +127,78 @@ int print_output(FILE *out, boat_params *boat, bomb_params **bombs, int bomb_cou
     fprintf(out, "%f\n", boat->weight);
     fprintf(out, "%f\n%f\n", boat->position.x, boat->position.y);
     fprintf(out, "%f\n%f\n", boat->velocity.x, boat->velocity.y);
+    fprintf(out, "\n");
+}
+
+int interact(boat_params *boat, bomb_params **bombs, int *bomb_count, float update_time)
+{
+    int i;
+    vec2 boat_acel;
+    boat_acel.x = boat->wind_velocity.x / boat->weight;
+    boat_acel.y = boat->wind_velocity.y / boat->weight;
+
+    boat->position.x += boat->velocity.x * update_time + (boat_acel.x * update_time * update_time) / 2;
+    boat->position.y += boat->velocity.y * update_time + (boat_acel.y * update_time * update_time) / 2;
+
+    boat->velocity.x += boat_acel.x * update_time;
+    boat->velocity.y += boat_acel.y * update_time;
+
+    for(i = 0; i < *bomb_count; i++) {
+        bombs[i]->remaining_update_time -= update_time;
+        if(bombs[i]->remaining_update_time <= 0){
+            remove_bomb(bombs, i);
+            (*bomb_count)--;
+        }else if(bombs[i]->position.x == boat->position.x && bombs[i]->position.y == boat->position.y){
+            remove_bomb(bombs, i);
+            (*bomb_count)--;
+        }
+    }
+}
+
+int remove_bomb(bomb_params **bombs, int bomb_num)
+{
+    printf("BOOM!!\n\n");
+    return 0;
+}
+
+void wait (float seconds)
+{
+  clock_t endwait;
+  endwait = clock () + seconds * CLOCKS_PER_SEC ;
+  while (clock() < endwait) {}
 }
 
 int main(int argc, char**argv)
 {
+    int i;
     boat_params *boat;
     bomb_params **bombs;
     int bomb_count;
+    float update_time;
+    float simulation_time;
 
-    if(read_input(stdin, &boat, &bombs, &bomb_count)) {
-        print_output(stdout, boat, bombs, bomb_count);
-        free_data(boat, bombs, bomb_count);
+    if(argc != 3){
+        printf("Missing arguments\n");
+        return 0;
     }
+
+    update_time = atof(argv[1]);
+    simulation_time = atof(argv[2]);
+
+    if(!read_input(stdin, &boat, &bombs, &bomb_count))
+        exit(EXIT_FAILURE);
+
+
+    print_output(stdout, boat, bombs, bomb_count);
+
+    while(simulation_time>0)
+    {
+        interact(boat, bombs, &bomb_count, update_time);
+        wait(update_time);
+        print_output(stdout, boat, bombs, bomb_count);
+        simulation_time -= update_time;
+    }
+
+    free_data(boat, bombs, bomb_count);
+    return 0;
 }

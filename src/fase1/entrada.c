@@ -110,27 +110,31 @@ error:
 }
 
 
-int print_output(FILE *out, boat_params *boat, bomb_params **bombs, int bomb_count)
+int print_output(FILE *out, boat_params *boat, bomb_params **bombs, int bomb_count, int total_bombs)
 {
     fprintf(out, ".w\n");
-    fprintf(out, "%f\n%f\n", boat->wind_velocity.x, boat->wind_velocity.y);
+    fprintf(out, "%f %f\n", boat->wind_velocity.x, boat->wind_velocity.y);
 
     fprintf(out, ".b %d\n", bomb_count);
 
     int i;
-    for(i = 0; i < bomb_count; i++) {
+    for(i = 0; i < total_bombs; i++) {
+        if(bombs[i]->remaining_update_time <= 0){
+            printf("\n");
+            continue;
+        }
         fprintf(out, "%f %f %f %f\n", bombs[i]->modifier, bombs[i]->remaining_update_time,
                 bombs[i]->position.x, bombs[i]->position.y);
     }
 
     fprintf(out, ".s\n");
     fprintf(out, "%f\n", boat->weight);
-    fprintf(out, "%f\n%f\n", boat->position.x, boat->position.y);
-    fprintf(out, "%f\n%f\n", boat->velocity.x, boat->velocity.y);
+    fprintf(out, "%f %f\n", boat->position.x, boat->position.y);
+    fprintf(out, "%f %f\n", boat->velocity.x, boat->velocity.y);
     fprintf(out, "\n");
 }
 
-int interact(boat_params *boat, bomb_params **bombs, int *bomb_count, float update_time)
+int interact(boat_params *boat, bomb_params **bombs, int *bomb_count, int total_bombs, float update_time)
 {
     int i;
     vec2 boat_acel;
@@ -143,22 +147,16 @@ int interact(boat_params *boat, bomb_params **bombs, int *bomb_count, float upda
     boat->velocity.x += boat_acel.x * update_time;
     boat->velocity.y += boat_acel.y * update_time;
 
-    for(i = 0; i < *bomb_count; i++) {
+    for(i = 0; i < total_bombs; i++) {
+        if(bombs[i]->remaining_update_time <= 0)
+            continue;
         bombs[i]->remaining_update_time -= update_time;
         if(bombs[i]->remaining_update_time <= 0){
-            remove_bomb(bombs, i);
             (*bomb_count)--;
         }else if(bombs[i]->position.x == boat->position.x && bombs[i]->position.y == boat->position.y){
-            remove_bomb(bombs, i);
             (*bomb_count)--;
         }
     }
-}
-
-int remove_bomb(bomb_params **bombs, int bomb_num)
-{
-    printf("BOOM!!\n\n");
-    return 0;
 }
 
 void wait (float seconds)
@@ -174,6 +172,7 @@ int main(int argc, char**argv)
     boat_params *boat;
     bomb_params **bombs;
     int bomb_count;
+    int total_bombs;
     float update_time;
     float simulation_time;
 
@@ -188,14 +187,16 @@ int main(int argc, char**argv)
     if(!read_input(stdin, &boat, &bombs, &bomb_count))
         exit(EXIT_FAILURE);
 
+    total_bombs = bomb_count;
 
-    print_output(stdout, boat, bombs, bomb_count);
+    print_output(stdout, boat, bombs, bomb_count, total_bombs);
 
+    // Loop Principal
     while(simulation_time>0)
     {
-        interact(boat, bombs, &bomb_count, update_time);
+        interact(boat, bombs, &bomb_count, total_bombs, update_time);
         wait(update_time);
-        print_output(stdout, boat, bombs, bomb_count);
+        print_output(stdout, boat, bombs, bomb_count, total_bombs);
         simulation_time -= update_time;
     }
 

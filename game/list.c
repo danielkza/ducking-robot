@@ -7,9 +7,9 @@ list_create()
 {
     list_t *list = malloc(sizeof(*list));
     if(list == NULL)
-        return NULL;
-
-    list->prev = list->next = list;
+		return NULL;
+	
+	list->prev = list->next = list;
     list->item = NULL;
 
     return list;
@@ -26,75 +26,141 @@ list_free(list_t *list)
     }
 }
 
-void
-list_push(list_t *list,
-           void *item)
+list_t *
+list_insert(list_t *prev,
+            void *item)
 {
-    if(list == NULL)
-        return;
+	list_t *entry;
 
-    list_t *entry = malloc(sizeof(*list));
-    if(entry == NULL)
-        return;
+    if(prev == NULL)
+        return NULL;
 
-    entry->prev = list->prev;
-    entry->next = list;
-    list->prev->next = entry;
-    list->prev = entry;
+    entry = malloc(sizeof(*entry));
+	if(entry == NULL)
+		return NULL;
 
+    entry->prev = prev;
+    entry->next = prev->next;
+
+    entry->next->prev = entry;
+    entry->prev->next = entry;
+    
     entry->item = item;
+    return entry;
+}
+
+list_t *
+list_push(list_t *list,
+          void *item)
+{
+    return list == NULL ? NULL : list_insert(list->prev, item);
+}
+
+list_t *
+list_push_front(list_t *list,
+                void *item)
+{
+    return list == NULL ? NULL : list_insert(list, item);
 }
 
 void *
-list_pop(list_t *list)
+list_remove(list_t *pos)
 {
-    if(list == NULL || list->prev == list)
+	list_t *prev, *next;
+	void *item;
+
+    if(pos == NULL || pos->next == pos)
         return NULL;
 
-    list_t *entry = list->prev;
-    
-    list->prev = entry->prev;
-    entry->prev->next = list;
+    prev = pos->prev;
+	next = pos->next;
 
-    void *item = entry->item;
-    free(entry);
+    prev->next = next;
+    next->prev = prev;
+
+    item = pos->item;
+    free(pos);
 
     return item;
 }
 
 void *
-list_front(list_t *list)
+list_pop(list_t *list)
 {
-    if(list == NULL || list->next == list)
-        return NULL;
-
-    return list->next->item;
+    return list_empty(list) ? NULL : list_remove(list->prev);
 }
 
+void *
+list_pop_front(list_t *list)
+{
+    return list_empty(list) ? NULL : list_remove(list->next);
+}
+
+void
+list_splice(list_t *start, list_t *end, list_t *dest)
+{
+	list_t *start_prev, *end_prev, *dest_next;
+    if(start == NULL || end == NULL || dest == NULL || start == end)
+        return;
+
+    start_prev = start->prev,
+    end_prev = end->prev,
+    dest_next = dest->next;
+
+    start_prev->next = end;
+    end->prev = start_prev;
+
+    start->prev = dest;
+    dest->next = start;
+
+    dest_next->prev = end_prev;
+    end_prev->next = dest_next;
+}
+
+void
+list_swap(list_t *a, list_t *b)
+{
+	void *a_item;
+    if(a == NULL || b == NULL)
+        return;
+
+    a_item = a->item;
+    a->item = b->item;
+    b->item = a_item;
+}
+
+int
+list_empty(list_t *list)
+{
+    return (list == NULL || list->next == list);
+}
 
 void *
-list_tail(list_t *list)
+list_front(list_t *list)
 {
-    if(list == NULL || list->next == list)
-        return NULL;
+    return list_empty(list) ? NULL : list->next->item;
+}
 
-    return list->prev->item;
+void *
+list_back(list_t *list)
+{
+    return list_empty(list) ? NULL : list->prev->item;
 }
 
 list_t *
 list_copy(list_t *list)
 {
+	list_t *new_list, *iter;
+	void *item;
+
     if(list == NULL)
         return NULL;
 
-    list_t *new_list = list_create();
+    new_list = list_create();
     if(new_list == NULL)
         return NULL;
 
-    list_t *iter;
-    void *item;
-
-    list_for_each(list, iter, void*, item) {
+    list_for_each_item(list, iter, item) {
         list_push(new_list, item);
     }
 

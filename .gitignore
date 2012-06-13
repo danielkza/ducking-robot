@@ -36,15 +36,9 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 
 #Project files
-#[Bb]uild/
+[Bb]uild/
 
 #Subversion files
 .svn
-
-# Office Temp Files
-~$*
-
-*.o
-*/build/*.exe
 
 *.sublime-workspace

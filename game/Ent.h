@@ -12,11 +12,11 @@
 typedef struct Ent Ent;
 
 typedef struct ent_class_t {
-	const char *name;
-	size_t data_size;
-	const struct ent_class_t *base;
-	void (*m_init)(Ent *ent);
-	void (*m_destroy)(Ent *ent);
+    const char *name;
+    size_t data_size;
+    const struct ent_class_t *base;
+    void (*m_init)(Ent *ent);
+    void (*m_destroy)(Ent *ent);
 } ent_class_t;
 
 Ent *Ent_m_create(const ent_class_t *eclass);
@@ -28,31 +28,31 @@ void Ent_m_free(Ent *ent);
 const ent_class_t Ent_CLASS;
 
 #define Ent_STRUCT \
-	const ent_class_t *eclass; \
-	\
-	struct Ent *parent; \
-	\
-	unsigned int flags; \
-	\
-	vec2 position; \
-	vec2 move_direction; \
-	float speed; \
-	float max_speed; \
-	\
-	float rotation; \
-	float rot_speed; \
-	float max_rot_speed; \
-	\
-	Uint32 prev_think; \
-	Uint32 next_think; \
+    const ent_class_t *eclass; \
     \
-	void (*m_spawn) (struct Ent*); \
-	void (*m_remove)(struct Ent*); \
-	void (*m_think) (struct Ent*); \
-	\
-	void (*m_touch)  (struct Ent*, struct Ent*); \
-	\
-	void (*m_on_frame)(struct Ent *)
+    struct Ent *parent; \
+    \
+    unsigned int flags; \
+    \
+    vec2 position; \
+    vec2 move_direction; \
+    float speed; \
+    float max_speed; \
+    \
+    float rotation; \
+    float rot_speed; \
+    float max_rot_speed; \
+    \
+    Uint32 prev_think; \
+    Uint32 next_think; \
+    \
+    void (*m_spawn) (struct Ent*); \
+    void (*m_remove)(struct Ent*); \
+    void (*m_think) (struct Ent*); \
+    \
+    void (*m_touch)  (struct Ent*, struct Ent*); \
+    \
+    void (*m_on_frame)(struct Ent *)
 
 struct Ent {
     Ent_STRUCT;
@@ -72,13 +72,13 @@ CLS_DEF_ACCESSOR(Ent, float, max_rot_speed);
 static inline void
 Ent_set_velocity_vec(Ent *ent, vec2 *vel)
 {
-	float speed = vec2_len(vel);
-	vec2 direction = *vel;
+    float speed = vec2_len(vel);
+    vec2 direction = *vel;
 
-	vec2_norm(&direction);
+    vec2_norm(&direction);
 
-	Ent_set_move_direction(ent, &direction);
-	Ent_set_speed(ent, speed);
+    Ent_set_move_direction(ent, &direction);
+    Ent_set_speed(ent, speed);
 }
 
 

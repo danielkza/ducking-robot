@@ -13,13 +13,13 @@
 #endif
 
 typedef struct {
-	event_listener_func callback;
-	void *param;
+    event_listener_func callback;
+    void *param;
 } event_listener_t;
 
 static struct {
-	char *type;
-	list_t *listeners;
+    char *type;
+    list_t *listeners;
 } event_table[EVENT_MAX];
 
 static int event_table_count = -1;
@@ -27,83 +27,83 @@ static int event_table_count = -1;
 int
 events_init()
 {
-	if(event_table_count >= 0)
-		return -1;
+    if(event_table_count >= 0)
+        return -1;
 
-	event_table_count = 0;
-	memset(event_table, 0, sizeof(event_table));
+    event_table_count = 0;
+    memset(event_table, 0, sizeof(event_table));
 
-	return 0;
+    return 0;
 }
 
 void
 events_shutdown()
 {
-	int i;
+    int i;
 
-	if(event_table_count < 0)
-		return;
+    if(event_table_count < 0)
+        return;
 
-	for(i = 0; i < EVENT_MAX; i++)
-	{
-		if(event_table[i].type == NULL)
-			continue;
+    for(i = 0; i < EVENT_MAX; i++)
+    {
+        if(event_table[i].type == NULL)
+            continue;
 
-		free(event_table[i].type);
-		list_free(event_table[i].listeners);
-	}
+        free(event_table[i].type);
+        list_free(event_table[i].listeners);
+    }
 }
 
 static unsigned int
 events_hash_string(const char *string)
 {
-	return hash_fnv1a_str(string);
+    return hash_fnv1a_str(string);
 }
 
 static int
 events_find_pos(const char *type)
 {
-	unsigned int hash, pos;
-	
-	hash = events_hash_string(type) % EVENT_MAX;
-	pos = hash;
-	
-	do
-	{
-		if(event_table[pos].type == NULL || strcasecmp(type, event_table[pos].type) == 0)
-			return pos;
+    unsigned int hash, pos;
+    
+    hash = events_hash_string(type) % EVENT_MAX;
+    pos = hash;
+    
+    do
+    {
+        if(event_table[pos].type == NULL || strcasecmp(type, event_table[pos].type) == 0)
+            return pos;
 
-		pos++;
-	} while(pos != hash);
+        pos++;
+    } while(pos != hash);
 
-	return -1;
+    return -1;
 }
 
 event_handle_t
 events_register(const char *type)
 {
-	int pos;
+    int pos;
 
-	if(type == NULL || type[0] == '\0')
-		return -1;
+    if(type == NULL || type[0] == '\0')
+        return -1;
 
-	pos = events_find_pos(type);
-	if(pos == -1)
-		return -1;
+    pos = events_find_pos(type);
+    if(pos == -1)
+        return -1;
 
-	if(event_table[pos].type == NULL) {
-		int len = strlen(type);
-		char *type_copy = malloc(len + 1);
-		assert(type_copy != NULL);
+    if(event_table[pos].type == NULL) {
+        int len = strlen(type);
+        char *type_copy = malloc(len + 1);
+        assert(type_copy != NULL);
 
-		memcpy(type_copy, type, len);
-		type_copy[len] = '\0';
+        memcpy(type_copy, type, len);
+        type_copy[len] = '\0';
 
-		event_table[pos].type = type_copy;
-		event_table[pos].listeners = list_create();
-	}
+        event_table[pos].type = type_copy;
+        event_table[pos].listeners = list_create();
+    }
 
-	return pos;
+    return pos;
 }
 
 int
@@ -113,18 +113,18 @@ events_listen(event_handle_t event_handle,
 {
     event_listener_t *listener;
 
-	if(event_handle < 0 || event_handle >= EVENT_MAX || callback == NULL)
+    if(event_handle < 0 || event_handle >= EVENT_MAX || callback == NULL)
         return -1;
 
-	listener = malloc(sizeof(*listener));
-	assert(listener != NULL);
+    listener = malloc(sizeof(*listener));
+    assert(listener != NULL);
 
-	listener->callback = callback;
-	listener->param = param;
+    listener->callback = callback;
+    listener->param = param;
 
-	list_push_front(event_table[event_handle].listeners, listener);
+    list_push_front(event_table[event_handle].listeners, listener);
 
-	return 0;
+    return 0;
 }
 
 int
@@ -150,14 +150,14 @@ events_cancel_listen(event_handle_t event_handle,
 
 int
 events_fire(event_handle_t event_handle,
-		    Ent *origin,
-			void *data)
+            Ent *origin,
+            void *data)
 {
     event_t event;
     list_t *iter;
     event_listener_t *listener;
 
-	if(event_handle < 0 || event_handle >= EVENT_MAX)
+    if(event_handle < 0 || event_handle >= EVENT_MAX)
         return EVENT_ERROR;
 
     event.handle = event_handle;

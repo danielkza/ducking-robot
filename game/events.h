@@ -16,10 +16,10 @@
 typedef int event_handle_t;
 
 typedef struct {
-	event_handle_t handle;
-	Uint32 time;
-	Ent *origin;
-	void *data;
+    event_handle_t handle;
+    Uint32 time;
+    Ent *origin;
+    void *data;
 } event_t;
 
 typedef int (*event_listener_func)(void *param, const event_t *event);
@@ -36,7 +36,7 @@ events_register(const char *type);
 int
 events_listen(event_handle_t event_handle, 
               event_listener_func callback,
-			  void *param);
+              void *param);
 
 int
 events_cancel_listen(event_handle_t event_handle,
@@ -46,6 +46,6 @@ events_cancel_listen(event_handle_t event_handle,
 int
 events_fire(event_handle_t event_handle,
             Ent *origin,
-			void *data);
+            void *data);
 
 #endif

@@ -14,13 +14,12 @@ void reset_stdout()
     freopen( "CON", "w", stdout );
     freopen( "CON", "w", stderr );
 #endif
-    return;
 }
 
 int main(int argc, char **argv)
 {
     SDL_Surface *screen;
- 	VisibleEnt *v_ent; 
+     VisibleEnt *v_ent; 
     Ent *ent;
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -52,5 +51,5 @@ done:
     ENT_FREE(ent);
     ENT_FREE(v_ent);
 
-	return 0;
+    return 0;
 }

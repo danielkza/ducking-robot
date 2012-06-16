@@ -7,9 +7,9 @@ list_create()
 {
     list_t *list = malloc(sizeof(*list));
     if(list == NULL)
-		return NULL;
-	
-	list->prev = list->next = list;
+        return NULL;
+    
+    list->prev = list->next = list;
     list->item = NULL;
 
     return list;
@@ -30,14 +30,14 @@ list_t *
 list_insert(list_t *prev,
             void *item)
 {
-	list_t *entry;
+    list_t *entry;
 
     if(prev == NULL)
         return NULL;
 
     entry = malloc(sizeof(*entry));
-	if(entry == NULL)
-		return NULL;
+    if(entry == NULL)
+        return NULL;
 
     entry->prev = prev;
     entry->next = prev->next;
@@ -66,14 +66,14 @@ list_push_front(list_t *list,
 void *
 list_remove(list_t *pos)
 {
-	list_t *prev, *next;
-	void *item;
+    list_t *prev, *next;
+    void *item;
 
     if(pos == NULL || pos->next == pos)
         return NULL;
 
     prev = pos->prev;
-	next = pos->next;
+    next = pos->next;
 
     prev->next = next;
     next->prev = prev;
@@ -99,7 +99,7 @@ list_pop_front(list_t *list)
 void
 list_splice(list_t *start, list_t *end, list_t *dest)
 {
-	list_t *start_prev, *end_prev, *dest_next;
+    list_t *start_prev, *end_prev, *dest_next;
     if(start == NULL || end == NULL || dest == NULL || start == end)
         return;
 
@@ -120,7 +120,7 @@ list_splice(list_t *start, list_t *end, list_t *dest)
 void
 list_swap(list_t *a, list_t *b)
 {
-	void *a_item;
+    void *a_item;
     if(a == NULL || b == NULL)
         return;
 
@@ -150,8 +150,8 @@ list_back(list_t *list)
 list_t *
 list_copy(list_t *list)
 {
-	list_t *new_list, *iter;
-	void *item;
+    list_t *new_list, *iter;
+    void *item;
 
     if(list == NULL)
         return NULL;

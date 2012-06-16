@@ -5,10 +5,11 @@
 #include "list.h"
 #include "Ent.h"
 
+#include "hash_fnv1a.h"
 #include "events.h"
 
 #ifdef _MSC_VER
-#define strcasecmp stricmp
+#define strcasecmp _stricmp
 #endif
 
 typedef struct {
@@ -56,7 +57,7 @@ events_shutdown()
 static unsigned int
 events_hash_string(const char *string)
 {
-	return 0;
+	return hash_fnv1a_str(string);
 }
 
 static int
@@ -112,7 +113,7 @@ events_listen(event_handle_t event_handle,
 {
     event_listener_t *listener;
 
-	if(event_handle < 0 || event_handle >= EVENT_MAX)
+	if(event_handle < 0 || event_handle >= EVENT_MAX || callback == NULL)
         return -1;
 
 	listener = malloc(sizeof(*listener));
@@ -127,6 +128,27 @@ events_listen(event_handle_t event_handle,
 }
 
 int
+events_cancel_listen(event_handle_t event_handle,
+                     event_listener_func callback,
+                     void *param)
+{
+    list_t *iter, *next;
+
+    if(event_handle < 0 || event_handle >= EVENT_MAX || callback == NULL)
+        return -1;
+
+    list_for_each_node(event_table[event_handle].listeners, iter, next) {
+        event_listener_t *listener = iter->item;
+        if(listener->callback == callback && listener->param == param) {
+            list_remove(iter);
+            free(listener);
+        }
+    }
+
+    return 0;
+}
+
+int
 events_fire(event_handle_t event_handle,
 		    Ent *origin,
 			void *data)
@@ -136,7 +158,7 @@ events_fire(event_handle_t event_handle,
     event_listener_t *listener;
 
 	if(event_handle < 0 || event_handle >= EVENT_MAX)
-        return -1;
+        return EVENT_ERROR;
 
     event.handle = event_handle;
     event.data = data;
@@ -145,9 +167,10 @@ events_fire(event_handle_t event_handle,
 
     list_for_each_item(event_table[event_handle].listeners, iter, listener)
     {
-        if((*listener->callback)(listener->param, &event) == EVENT_CONSUME)
-            return 1;
+        int result = (*listener->callback)(listener->param, &event);
+        if(result != EVENT_PASS)
+            return result;
     }
 
-    return 0;
+    return EVENT_PASS;
 }

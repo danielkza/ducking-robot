@@ -22,34 +22,22 @@ target_link_libraries(ducking_robot
                       ${SDLIMAGE_LIBRARY}
                       ${SDLMIXER_LIBRARY})
 
-# Get folders where SDL's shared libs reside
+# Retrieve the paths to shared libraries to be copied to output folder
 
-LIST(GET SDL_LIBRARY 0 SDL_LIB_DIR)
-GET_FILENAME_COMPONENT(SDL_LIB_DIR "${SDL_LIB_DIR}" PATH)
+macro(copy_shared_lib target libstring libname)
+    SET(libvar "${libstring}")
+    list(GET libvar 0 libpath)
+    
+    get_filename_component(libpath "${libpath}" PATH)
+    
+    set(libpath "${libpath}/${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
-LIST(GET SDLMIXER_LIBRARY 0 SDLMIXER_LIB_DIR)
-GET_FILENAME_COMPONENT(SDLMIXER_LIB_DIR "${SDLMIXER_LIB_DIR}" PATH)
+    add_custom_command(TARGET ducking_robot POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${libpath}"
+      "$<TARGET_FILE_DIR:${target}>"
+    )
+endmacro()
 
-
-LIST(GET SDLIMAGE_LIBRARY 0 SDLIMAGE_LIB_DIR)
-GET_FILENAME_COMPONENT(SDLIMAGE_LIB_DIR "${SDLIMAGE_LIB_DIR}" PATH)
-
-# Copy shared libs to output folder
-
-add_custom_command(TARGET ducking_robot POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${SDL_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}SDL${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "$<TARGET_FILE_DIR:ducking_robot>"
-)
-
-add_custom_command(TARGET ducking_robot POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${SDLMIXER_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}SDL_mixer${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "$<TARGET_FILE_DIR:ducking_robot>"
-)
-
-add_custom_command(TARGET ducking_robot POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${SDLIMAGE_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}SDL_image${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "$<TARGET_FILE_DIR:ducking_robot>"
-)
+copy_shared_lib(ducking_robot "${SDL_LIBRARY}" "SDL")
+copy_shared_lib(ducking_robot "${SDLIMAGE_LIBRARY}" "SDL_image")
+copy_shared_lib(ducking_robot "${SDLMIXER_LIBRARY}" "SDL_mixer")

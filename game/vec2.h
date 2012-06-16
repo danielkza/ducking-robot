@@ -45,16 +45,16 @@ vec2_scale(vec2 *dest, int scale)
 	dest->y *= scale;
 }
 
-static inline double
+static inline int
 vec2_len_sqr(const vec2 *src)
 {
 	return (src->x * src->x) + (src->y * src->y);
 }
 
-static inline double
+static inline float
 vec2_len(const vec2 *src)
 {
-	return sqrt(vec2_len_sqr(src));
+	return (float)sqrt((float)vec2_len_sqr(src));
 }
 
 static inline void

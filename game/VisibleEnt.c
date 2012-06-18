@@ -66,7 +66,7 @@ void VisibleEnt_m_on_frame(Ent *ent)
 
 	vec2_norm(&move_direction);
 	ent->move_direction = move_direction;
-	ent->speed = 250;
+	ent->speed = 800;
 
 	Ent_m_on_frame(ent);
 

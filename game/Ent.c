@@ -113,7 +113,7 @@ Ent_m_think(Ent *ent)
 	speed_scaled = ent->speed * (diff / 1000.0f);
 
 	ent->prev_think = cur_time;
-	ent->next_think = cur_time + 10;
+	ent->next_think = cur_time + (1000 / 1000);
 
 	video_info = SDL_GetVideoInfo();
 

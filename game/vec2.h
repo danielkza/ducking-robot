@@ -9,7 +9,7 @@
 #endif
 
 typedef struct {
-    int x, y;
+    float x, y;
 } vec2;
 
 static const vec2 VEC2_ZERO = {0, 0};
@@ -39,13 +39,13 @@ vec2_dot(vec2 *dest, const vec2 *src)
 #undef APPLY
 
 static inline void
-vec2_scale(vec2 *dest, int scale)
+vec2_scale(vec2 *dest, float scale)
 {
     dest->x *= scale;
     dest->y *= scale;
 }
 
-static inline int
+static inline float
 vec2_len_sqr(const vec2 *src)
 {
     return (src->x * src->x) + (src->y * src->y);
@@ -60,9 +60,13 @@ vec2_len(const vec2 *src)
 static inline void
 vec2_norm(vec2 *dest)
 {
-    double len = vec2_len(dest);
-    dest->x /= (int)len;
-    dest->y /= (int)len;
+    float len = vec2_len(dest);
+	if(len == 0.0f) {
+		dest->x = dest->y = 0.0f;
+	} else {
+		dest->x /= len;
+		dest->y /= len;
+	}
 }
 
 static inline int
@@ -75,8 +79,8 @@ static inline void
 vec2_rotate(vec2 *dest, float rotation)
 {
     double rotation_rad = rotation * M_PI / 180;
-    dest->x += (int)(dest->x * cos(rotation_rad));
-    dest->y += (int)(dest->y * sin(rotation_rad));
+    dest->x += (dest->x * cos(rotation_rad));
+    dest->y += (dest->y * sin(rotation_rad));
 }
 
 #endif

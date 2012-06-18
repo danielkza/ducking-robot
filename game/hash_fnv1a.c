@@ -10,17 +10,18 @@
 #define FNV1A_32BIT_OFFSET 2166136261u
 
 uint32_t
-hash_fnv1a(const unsigned char *data,
+hash_fnv1a(const void *data,
            size_t len)
 {
+    unsigned char *b_data = (unsigned char *)data;
     uint32_t hash;
     size_t pos;
 
-    assert(data != NULL);
+    assert(b_data != NULL);
     
     hash = FNV1A_32BIT_OFFSET;
     for(pos = 0; pos < len; pos++) {
-        hash ^= data[pos];
+        hash ^= b_data[pos];
         hash *= FNV1A_32BIT_PRIME;
     }
 

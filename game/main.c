@@ -19,7 +19,7 @@ void reset_stdout()
 int main(int argc, char **argv)
 {
     SDL_Surface *screen;
-     VisibleEnt *v_ent; 
+    VisibleEnt *v_ent; 
     Ent *ent;
 
     SDL_Init(SDL_INIT_EVERYTHING);

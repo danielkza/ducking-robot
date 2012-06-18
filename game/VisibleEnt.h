@@ -14,6 +14,7 @@ const ent_class_t VisibleEnt_CLASS;
     Ent_STRUCT; \
     \
     SDL_Surface *image; \
+    SDL_Rect image_rect; \
     int visible; \
     \
     void (*m_draw)(struct VisibleEnt *ent)
@@ -32,6 +33,8 @@ VisibleEnt_set_image(VisibleEnt *ent, SDL_Surface *image)
     assert(image != NULL);
     ent->image = image;
 }
+
+CLS_DEF_ACCESSOR_INDIRECT(VisibleEnt, SDL_Rect, image_rect);
 
 
 #define VisibleEnt_GET(member, obj) \

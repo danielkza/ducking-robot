@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
+
+#include <SDL.h>
 
 #include "list.h"
 #include "Ent.h"
@@ -39,19 +42,19 @@ events_init()
 void
 events_shutdown()
 {
-    int i;
+    if(event_table_count > 0) {
+        int i;
+        for(i = 0; i < EVENT_MAX; i++)
+        {
+            if(event_table[i].type == NULL)
+                continue;
 
-    if(event_table_count < 0)
-        return;
-
-    for(i = 0; i < EVENT_MAX; i++)
-    {
-        if(event_table[i].type == NULL)
-            continue;
-
-        free(event_table[i].type);
-        list_free(event_table[i].listeners);
+            free(event_table[i].type);
+            list_free(event_table[i].listeners);
+        }
     }
+
+    event_table_count = -1;
 }
 
 static unsigned int
@@ -70,8 +73,11 @@ events_find_pos(const char *type)
     
     do
     {
-        if(event_table[pos].type == NULL || strcasecmp(type, event_table[pos].type) == 0)
+        if(event_table[pos].type == NULL
+           || strcasecmp(type, event_table[pos].type) == 0)
+        {
             return pos;
+        }
 
         pos++;
     } while(pos != hash);

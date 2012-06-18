@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 uint32_t
-hash_fnv1a(const unsigned char *data,
+hash_fnv1a(const void *data,
            size_t len);
 
 uint32_t

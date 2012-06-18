@@ -25,17 +25,19 @@ target_link_libraries(ducking_robot
 # Retrieve the paths to shared libraries to be copied to output folder
 
 macro(copy_shared_lib target libstring libname)
-    SET(libvar "${libstring}")
-    list(GET libvar 0 libpath)
-    
-    get_filename_component(libpath "${libpath}" PATH)
-    
-    set(libpath "${libpath}/${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    set(libvar "${libstring}")
+    if(NOT "${libvar}" STREQUAL "")
+        list(GET libvar 0 libpath)
+        
+        get_filename_component(libpath "${libpath}" PATH)
+        
+        set(libpath "${libpath}/${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
-    add_custom_command(TARGET ducking_robot POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${libpath}"
-      "$<TARGET_FILE_DIR:${target}>"
-    )
+        add_custom_command(TARGET ducking_robot POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different "${libpath}"
+          "$<TARGET_FILE_DIR:${target}>"
+        )
+    endif()
 endmacro()
 
 copy_shared_lib(ducking_robot "${SDL_LIBRARY}" "SDL")

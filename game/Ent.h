@@ -7,7 +7,7 @@
 
 #include "obj_defs.h"
 #include "vec2.h"
-
+#include "game_time.h"
 
 typedef struct Ent Ent;
 
@@ -58,16 +58,31 @@ struct Ent {
     Ent_STRUCT;
 };
 
-
+CLS_DEF_ACCESSOR(Ent, Ent *, parent);
 CLS_DEF_ACCESSOR(Ent, Uint32, flags);
 CLS_DEF_ACCESSOR_INDIRECT(Ent, vec2, position);
 CLS_DEF_ACCESSOR_INDIRECT(Ent, vec2, move_direction);
 CLS_DEF_ACCESSOR(Ent, float, speed);
 CLS_DEF_ACCESSOR(Ent, float, max_speed);
 CLS_DEF_ACCESSOR(Ent, float, rotation);
-
 CLS_DEF_ACCESSOR(Ent, float, rot_speed);
 CLS_DEF_ACCESSOR(Ent, float, max_rot_speed);
+CLS_DEF_ACCESSOR(Ent, Uint32, prev_think);
+CLS_DEF_ACCESSOR(Ent, Uint32, next_think);
+
+static inline Uint32
+Ent_get_think_interval(Ent *ent)
+{
+    return game_time() - ent->prev_think;
+}
+
+static inline void
+Ent_set_think_interval(Ent *ent, int interval)
+{
+    Uint32 cur_time = game_time();
+    ent->prev_think = cur_time;
+    ent->next_think = cur_time + interval;
+}
 
 static inline void
 Ent_set_velocity_vec(Ent *ent, vec2 *vel)

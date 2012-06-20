@@ -101,19 +101,10 @@ Ent_m_remove(Ent *ent)
 void
 Ent_m_think(Ent *ent)
 {
-    Uint32 cur_time, diff;
     float speed_scaled;
     const SDL_VideoInfo *video_info;
 
-    cur_time = SDL_GetTicks();
-    if(ent->next_think != 0 && ent->next_think > cur_time)
-        return;
-    
-    diff = cur_time - ent->prev_think;
-    speed_scaled = ent->speed * (diff / 1000.0f);
-
-    ent->prev_think = cur_time;
-    ent->next_think = cur_time + (1000 / 1000);
+    speed_scaled = ent->speed * Ent_GET(think_interval, ent) / 1000;
 
     video_info = SDL_GetVideoInfo();
 
@@ -121,14 +112,14 @@ Ent_m_think(Ent *ent)
     if(ent->position.x < 0)
         ent->position.x = 0;
     else if(ent->position.x > video_info->current_w - 64)
-        ent->position.x = video_info->current_w - 64;
+        ent->position.x = (float)(video_info->current_w) - 64;
 
     ent->position.y += (ent->move_direction.y * speed_scaled);
 
     if(ent->position.y < 0)
         ent->position.y = 0;
     else if(ent->position.y > video_info->current_h - 64)
-        ent->position.y = video_info->current_h - 64;
+        ent->position.y = (float)(video_info->current_h) - 64;
 }
 
 void

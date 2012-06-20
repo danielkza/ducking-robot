@@ -12,7 +12,7 @@
 
 #define CLS_DEF_SETTER(eclass, type, member) \
     static inline void \
-    eclass##_set_##member(eclass *obj, const type val) { obj->member = val; }
+    eclass##_set_##member(eclass *obj, type val) { obj->member = val; }
 
 #define CLS_DEF_ACCESSOR(eclass, type, member) \
     CLS_DEF_GETTER(eclass, type, member); \

@@ -18,20 +18,8 @@ void VisibleEnt_m_init(Ent *ent)
 {
     VisibleEnt *v_ent = (VisibleEnt*)ent;
     SDL_Rect *rect = &v_ent->image_rect;
-    const asset_data_t *test_image = assets_load(ASSET_TYPE_SURFACE,
-                                                 "images/boat.tga");
 
-    v_ent->image = test_image->surface;
-    
-    rect->x = rect->y = 0;
-    if(v_ent->image != NULL) {
-        rect->w = v_ent->image->w;
-        rect->h = v_ent->image->h;
-    } else {
-        printf("IMG_Load: %s\n", IMG_GetError());
-        rect->w = rect->h = 0;
-    }
-
+    v_ent->image = NULL;
     v_ent->visible = 1;
 
     v_ent->m_on_frame = VisibleEnt_m_on_frame;
@@ -48,29 +36,6 @@ void VisibleEnt_m_destroy(Ent *ent)
 
 void VisibleEnt_m_on_frame(Ent *ent)
 {
-    VisibleEnt *v_ent = (VisibleEnt *)ent;
-    Uint8 *key_state = SDL_GetKeyState(NULL);
-    vec2 move_direction = {0, 0};
-
-    if(key_state[SDLK_LEFT]) {
-        move_direction.x += -1;
-    } else if(key_state[SDLK_RIGHT]) {
-        move_direction.x += +1;
-    }
-    
-    if(key_state[SDLK_UP]) {
-        move_direction.y += -1;
-    } else if(key_state[SDLK_DOWN]) {
-        move_direction.y += +1;
-    }
-
-    vec2_norm(&move_direction);
-    ent->move_direction = move_direction;
-    ent->speed = 800;
-
-    Ent_m_on_frame(ent);
-
-    VisibleEnt_CALL(draw, v_ent);
 }
 
 void VisibleEnt_m_draw(VisibleEnt *ent)

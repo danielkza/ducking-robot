@@ -10,6 +10,7 @@
 
 #include "hash_fnv1a.h"
 #include "events.h"
+#include "game_time.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
@@ -169,7 +170,7 @@ events_fire(event_handle_t event_handle,
     event.handle = event_handle;
     event.data = data;
     event.origin = origin;
-    event.time = SDL_GetTicks();
+    event.time = game_time();
 
     list_for_each_item(event_table[event_handle].listeners, iter, listener)
     {

@@ -6,8 +6,7 @@
 
 #include "assets.h"
 
-#include "Ent.h"
-#include "VisibleEnt.h"
+#include "Boat.h"
 
 void reset_stdout()
 {    
@@ -22,10 +21,9 @@ int main(int argc, char **argv)
 {
     SDL_Surface *screen, *background;
     const SDL_VideoInfo *video_info;
-    VisibleEnt *v_ent; 
-    Ent *ent;
-    vec2 velocity = {250, 250};
+    Boat *boat;
     const asset_data_t *bg_asset;
+    Uint32 frame_start, frame_end = 0;
 
     SDL_Init(SDL_INIT_EVERYTHING);
     atexit(SDL_Quit);
@@ -36,47 +34,48 @@ int main(int argc, char **argv)
     bg_asset = assets_load(ASSET_TYPE_SURFACE, "images/water.tga");
     background = bg_asset->surface;
 
-    ent = ENT_CREATE(Ent);
-    v_ent = ENT_CREATE(VisibleEnt);
-
-    Ent_CALL(spawn, ent);
-    Ent_CALL(spawn, v_ent);
-
-    Ent_set_velocity_vec((Ent*)v_ent, &velocity);
+    boat = ENT_CREATE(Boat);
+    Ent_CALL(spawn, boat);
 
     video_info = SDL_GetVideoInfo();
 
     for(;;) {
-        int row, col;
-
+        frame_start = SDL_GetTicks();
+        game_time_update(frame_start - frame_end);
+        
+        {
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT)
                 goto done;
         }
+        }
 
         SDL_Delay(1000 / 1000);
         
+        {
+        int col, row;
         for(col = 0; col < (video_info->current_w / 64) + 1; col++) {
             for(row = 0; row < (video_info->current_h / 64) + 1; row++) {
                 SDL_Rect pos = {col * 64, row * 64, 0, 0};
                 SDL_BlitSurface(background, NULL, screen, &pos);
             }
         }
+        }
 
-        Ent_CALL(think, ent);
-        Ent_CALL(think, v_ent);
+        if(game_time() >= Ent_GET(next_think, boat))
+            Ent_CALL(think, boat);
 
-        Ent_CALL(on_frame, ent);
-        Ent_CALL(on_frame, v_ent);
+        Ent_CALL(on_frame, boat);
 
         SDL_Flip(screen);
+
+        frame_end = SDL_GetTicks();
+        game_time_update(frame_end - frame_start);
     }
 
 done:
-
-    ENT_FREE(ent);
-    ENT_FREE(v_ent);
+    ENT_FREE(boat);
 
     return 0;
 }

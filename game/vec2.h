@@ -74,7 +74,7 @@ vec2_from_angle(vec2 *dest, float angle)
 {
     float rad_angle = (float)(angle / 180 * M_PI);
     dest->x = (float)cos(rad_angle);
-    dest->y = (float)sin(rad_angle);
+    dest->y = -(float)sin(rad_angle);
 }
 
 

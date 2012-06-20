@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     SDL_Init(SDL_INIT_EVERYTHING);
     atexit(SDL_Quit);
 
-    screen = SDL_SetVideoMode(0, 0, 0, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    screen = SDL_SetVideoMode(800, 600, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
     reset_stdout();
 
     bg_asset = assets_load(ASSET_TYPE_SURFACE, "images/water.tga");
@@ -48,9 +48,10 @@ int main(int argc, char **argv)
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT)
                 goto done;
-            else if(event.type == SDL_KEYDOWN)
+            else if(event.type == SDL_KEYDOWN) {
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                     goto done;
+            }
         }
         }
 

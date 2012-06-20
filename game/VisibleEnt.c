@@ -36,6 +36,7 @@ void VisibleEnt_m_destroy(Ent *ent)
 
 void VisibleEnt_m_on_frame(Ent *ent)
 {
+    VisibleEnt_CALL(draw, ent);
 }
 
 void VisibleEnt_m_draw(VisibleEnt *ent)

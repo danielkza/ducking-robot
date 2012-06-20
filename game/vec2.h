@@ -61,12 +61,12 @@ static inline void
 vec2_norm(vec2 *dest)
 {
     float len = vec2_len(dest);
-	if(len == 0.0f) {
-		dest->x = dest->y = 0.0f;
-	} else {
-		dest->x /= len;
-		dest->y /= len;
-	}
+    if(len == 0.0f) {
+        dest->x = dest->y = 0.0f;
+    } else {
+        dest->x /= len;
+        dest->y /= len;
+    }
 }
 
 static inline int

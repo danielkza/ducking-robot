@@ -36,9 +36,9 @@
     eclass##_get_##member((eclass*)(obj))
 
 #define CLS_DEF_SET(eclass, member, obj, ...) \
-	eclass##_set_##member((eclass*)(obj), ##__VA_ARGS__)
+    eclass##_set_##member((eclass*)(obj), ##__VA_ARGS__)
 
 #define CLS_DEF_CALL(eclass, method, obj, ...) \
-	(*((eclass*)(obj))->m_##method)((eclass*)(obj), ##__VA_ARGS__) 
+    (*((eclass*)(obj))->m_##method)((eclass*)(obj), ##__VA_ARGS__) 
 
 #endif

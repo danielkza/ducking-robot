@@ -41,10 +41,10 @@ CLS_DEF_ACCESSOR_INDIRECT(VisibleEnt, SDL_Rect, image_rect);
     CLS_DEF_GET(VisibleEnt, member, obj)
 
 #define VisibleEnt_SET(member, obj, ...) \
-    CLS_DEF_SET(VisibleEnt, member, obj, __VA_ARGS__)
+    CLS_DEF_SET(VisibleEnt, member, obj, ##__VA_ARGS__)
 
 #define VisibleEnt_CALL(method, obj, ...) \
-    CLS_DEF_CALL(VisibleEnt, method, obj, __VA_ARGS__)
+    CLS_DEF_CALL(VisibleEnt, method, obj, ##__VA_ARGS__)
 
 
 void VisibleEnt_m_init(Ent *ent);

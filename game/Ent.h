@@ -86,10 +86,10 @@ Ent_set_velocity_vec(Ent *ent, vec2 *vel)
     CLS_DEF_GET(Ent, member, obj)
 
 #define Ent_SET(member, obj, ...) \
-    CLS_DEF_SET(Ent, member, obj, __VA_ARGS__)
+    CLS_DEF_SET(Ent, member, obj, ##__VA_ARGS__)
 
 #define Ent_CALL(method, obj, ...) \
-    CLS_DEF_CALL(Ent, method, obj, __VA_ARGS__)
+    CLS_DEF_CALL(Ent, method, obj, ##__VA_ARGS__)
 
 
 void Ent_m_init(Ent *ent);

@@ -18,7 +18,7 @@
 #endif
 
 static struct {
-	char *file;
+    char *file;
     asset_type_t type;
     asset_data_t data;
 } asset_table[ASSET_MAX];
@@ -28,9 +28,9 @@ static int asset_table_count = -1;
 int
 assets_init()
 {
-	asset_table_count = 0;
+    asset_table_count = 0;
 
-	IMG_Init(IMG_INIT_PNG);
+    IMG_Init(IMG_INIT_PNG);
 
     return 0;
 }
@@ -45,9 +45,9 @@ asset_data_free(asset_type_t type, asset_data_t *data)
     case ASSET_TYPE_SURFACE:
         SDL_FreeSurface(data->surface);
         break;
-	case ASSET_TYPE_ANIMATION:
-		// TODO: implement animation freeing
-		break;
+    case ASSET_TYPE_ANIMATION:
+        // TODO: implement animation freeing
+        break;
     case ASSET_TYPE_WAVE:
         Mix_FreeChunk(data->wave);
         break;
@@ -139,81 +139,81 @@ assets_insert(int pos,
 static asset_binary_data_t *
 assets_load_binary(const char *file)
 {
-	struct stat finfo;
-	FILE *fp;
-	asset_binary_data_t *bin_data;
-	void *data;
+    struct stat finfo;
+    FILE *fp;
+    asset_binary_data_t *bin_data;
+    void *data;
 
-	if(stat(file, &finfo) != 0)
-		return NULL;
+    if(stat(file, &finfo) != 0)
+        return NULL;
 
-	fp = fopen(file, "rb");
-	if(fp == NULL)
-		return NULL;
+    fp = fopen(file, "rb");
+    if(fp == NULL)
+        return NULL;
 
-	bin_data = malloc(sizeof(*bin_data));
-	if(bin_data == NULL) {
-		fclose(fp);
-		return NULL;
-	}
-	
-	data = malloc(bin_data->len);
-	if(data == NULL
-	   || (bin_data->len = fread(data, 1, bin_data->len, fp)) <= 0)
-	{
-		fclose(fp);
-		free(data);
-		free(bin_data);
-		return NULL;
-	}
+    bin_data = malloc(sizeof(*bin_data));
+    if(bin_data == NULL) {
+        fclose(fp);
+        return NULL;
+    }
+    
+    data = malloc(bin_data->len);
+    if(data == NULL
+       || (bin_data->len = fread(data, 1, bin_data->len, fp)) <= 0)
+    {
+        fclose(fp);
+        free(data);
+        free(bin_data);
+        return NULL;
+    }
 
-	bin_data->data = data;
+    bin_data->data = data;
 
-	fclose(fp);
-	return bin_data;
+    fclose(fp);
+    return bin_data;
 }
 
 const asset_data_t *
 assets_load(asset_type_t type, const char *file)
 {
     int pos;
-	asset_data_t data;
+    asset_data_t data;
 
     if(file == NULL || file[0] == '\0')
         return NULL;
 
     pos = assets_find_pos(file);
     if(pos < 0)
-		return NULL;
+        return NULL;
 
-	if(asset_table[pos].file != NULL) {
-		if(type != asset_table[pos].type)
-			return NULL;
-		
-		return &asset_table[pos].data;
-	}
+    if(asset_table[pos].file != NULL) {
+        if(type != asset_table[pos].type)
+            return NULL;
+        
+        return &asset_table[pos].data;
+    }
 
-	// Asset not yet loaded, read it from file and cache it
-	switch(type) {
-	case ASSET_TYPE_SURFACE:
-		data.surface = IMG_Load(file);
-		break;
-	//case ASSET_TYPE_ANIMATION:
-		// TODO: load animation
-	    // break;
-	case ASSET_TYPE_WAVE:
-		data.wave = Mix_LoadWAV(file);
-		break;
-	case ASSET_TYPE_MUSIC:
-		data.music = Mix_LoadMUS(file);
-		break;
-	case ASSET_TYPE_BINARY:
-		data.bin = assets_load_binary(file);
-		break;
-	default:
-		return NULL;
-	}
+    // Asset not yet loaded, read it from file and cache it
+    switch(type) {
+    case ASSET_TYPE_SURFACE:
+        data.surface = IMG_Load(file);
+        break;
+    //case ASSET_TYPE_ANIMATION:
+        // TODO: load animation
+        // break;
+    case ASSET_TYPE_WAVE:
+        data.wave = Mix_LoadWAV(file);
+        break;
+    case ASSET_TYPE_MUSIC:
+        data.music = Mix_LoadMUS(file);
+        break;
+    case ASSET_TYPE_BINARY:
+        data.bin = assets_load_binary(file);
+        break;
+    default:
+        return NULL;
+    }
 
-	asset_table[pos].data = data;
-	return &asset_table[pos].data;
+    asset_table[pos].data = data;
+    return &asset_table[pos].data;
 }

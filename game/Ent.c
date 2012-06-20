@@ -103,7 +103,7 @@ Ent_m_think(Ent *ent)
 {
 	Uint32 cur_time, diff;
 	float speed_scaled;
-	SDL_VideoInfo *video_info;
+	const SDL_VideoInfo *video_info;
 
 	cur_time = SDL_GetTicks();
 	if(ent->next_think != 0 && ent->next_think > cur_time)

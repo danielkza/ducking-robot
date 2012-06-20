@@ -6,7 +6,7 @@
 
 #include "assets.h"
 
-#include "ent.h"
+#include "Ent.h"
 #include "VisibleEnt.h"
 
 const ent_class_t VisibleEnt_CLASS = {

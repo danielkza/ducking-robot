@@ -5,7 +5,7 @@
 
 #include <SDL.h>
 
-#include "ent.h"
+#include "Ent.h"
 
 
 const ent_class_t VisibleEnt_CLASS;

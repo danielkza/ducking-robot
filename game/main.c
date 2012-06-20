@@ -48,8 +48,6 @@ int main(int argc, char **argv)
 
     for(;;) {
 		int row, col;
-		int width, height;
-
 
 		SDL_Event event;
         while(SDL_PollEvent(&event)) {

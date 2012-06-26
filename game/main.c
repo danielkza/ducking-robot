@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 {
     SDL_Surface *screen, *background;
     const SDL_VideoInfo *video_info;
-    Boat *boat;
+    Boat *boat, *boat2;
     const asset_data_t *bg_asset;
     Uint32 frame_start, frame_end = 0;
 
@@ -35,7 +35,14 @@ int main(int argc, char **argv)
     background = bg_asset->surface;
 
     boat = ENT_CREATE(Boat);
+    boat2 = ENT_CREATE(Boat);
     Ent_CALL(spawn, boat);
+    Ent_CALL(spawn, boat2);
+
+    {
+    vec2 pos = {250, 250};
+    Ent_SET(position, boat2, &pos);
+    }
 
     video_info = SDL_GetVideoInfo();
 
@@ -70,7 +77,12 @@ int main(int argc, char **argv)
         if(game_time() >= Ent_GET(next_think, boat))
             Ent_CALL(think, boat);
 
+        if(game_time() >= Ent_GET(next_think, boat2))
+            Ent_CALL(think, boat2);    
+
+
         Ent_CALL(on_frame, boat);
+        Ent_CALL(on_frame, boat2);
 
         SDL_Flip(screen);
 
@@ -80,6 +92,7 @@ int main(int argc, char **argv)
 
 done:
     ENT_FREE(boat);
+    ENT_FREE(boat2);
 
     return 0;
 }

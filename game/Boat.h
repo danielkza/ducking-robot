@@ -34,4 +34,5 @@ void Boat_m_init(Ent *ent);
 void Boat_m_destroy(Ent *ent);
 void Boat_m_spawn(Ent *ent);
 void Boat_m_think(Ent *ent);
+
 #endif

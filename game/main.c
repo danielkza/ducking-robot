@@ -17,6 +17,8 @@ void reset_stdout()
 #endif
 }
 
+#define FRAME_RATE_MAX 60
+
 int main(int argc, char **argv)
 {
     SDL_Surface *screen, *background;
@@ -48,6 +50,9 @@ int main(int argc, char **argv)
 
     for(;;) {
         frame_start = SDL_GetTicks();
+        if(frame_end == 0)
+            frame_end = frame_start;
+
         game_time_update(frame_start - frame_end);
         
         {
@@ -61,8 +66,6 @@ int main(int argc, char **argv)
             }
         }
         }
-
-        SDL_Delay(1000 / 1000);
         
         {
         int col, row;
@@ -78,16 +81,26 @@ int main(int argc, char **argv)
             Ent_CALL(think, boat);
 
         if(game_time() >= Ent_GET(next_think, boat2))
-            Ent_CALL(think, boat2);    
-
+            Ent_CALL(think, boat2);
 
         Ent_CALL(on_frame, boat);
         Ent_CALL(on_frame, boat2);
 
         SDL_Flip(screen);
 
+        {
+        Uint32 delay = 1000 / FRAME_RATE_MAX, elapsed;
+
         frame_end = SDL_GetTicks();
-        game_time_update(frame_end - frame_start);
+        elapsed = frame_end - frame_start;
+
+        if(elapsed < delay)
+            delay -= elapsed;
+
+        frame_end = SDL_GetTicks();
+        game_time_update(elapsed);
+        SDL_Delay(delay);
+        }
     }
 
 done:

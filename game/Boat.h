@@ -12,13 +12,15 @@ const ent_class_t Boat_CLASS;
 
 #define Boat_STRUCT \
     VisibleEnt_STRUCT; \
-    int image_index
+    int image_index; \
+    Uint32 last_rot_time
 
 typedef struct Boat {
     Boat_STRUCT;
 } Boat;
 
 CLS_DEF_ACCESSOR(Boat, int, image_index);
+CLS_DEF_ACCESSOR(Boat, Uint32, last_rot_time);
 
 #define Boat_GET(member, obj) \
     CLS_DEF_GET(Boat, member, obj)

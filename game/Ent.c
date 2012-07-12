@@ -4,6 +4,7 @@
 
 #include "vec2.h"
 #include "events.h"
+#include "utils.h"
 
 #include "Ent.h"
 
@@ -98,28 +99,54 @@ Ent_m_remove(Ent *ent)
 {
 }
 
+static void
+Ent_update_position(Ent *ent, float scale)
+{
+    float speed = Ent_GET(speed, ent),
+          max_speed = Ent_GET(max_speed, ent),
+          speed_scaled;
+    unsigned int flags = Ent_GET(flags, ent);
+
+    if(max_speed >= 0) {
+        float speed_abs = fabs(speed);
+        
+        if(speed_abs > max_speed) {
+            speed = (speed > 0) ? max_speed : -max_speed;
+            Ent_SET(speed, ent, speed);
+        }
+    }
+
+    ent->position.x += (ent->move_direction.x * speed * scale);
+    ent->position.y += (ent->move_direction.y * speed * scale);
+
+    // TODO: Bounds for entity move ment
+}
+
+static void
+Ent_update_rotation(Ent *ent, float scale)
+{
+    float rotation = Ent_GET(rotation, ent),
+          rot_speed = Ent_GET(rot_speed, ent),
+          max_rot_speed = Ent_GET(max_rot_speed, ent);
+
+    if(max_rot_speed > 0) {
+        float rot_speed_abs = fabs(rot_speed);
+        if(rot_speed_abs > max_rot_speed) {
+            rot_speed = (rot_speed > 0) ? max_rot_speed : -max_rot_speed;
+            Ent_SET(rot_speed, ent, rot_speed);
+        }
+    }
+
+    Ent_SET(rotation, ent, angle_normalize(rotation + rot_speed));
+}
+
+
 void
 Ent_m_think(Ent *ent)
 {
-    float speed_scaled;
-    const SDL_VideoInfo *video_info;
-
-    speed_scaled = ent->speed * Ent_GET(think_interval, ent) / 1000;
-
-    video_info = SDL_GetVideoInfo();
-
-    ent->position.x += (ent->move_direction.x * speed_scaled);
-    if(ent->position.x < 0)
-        ent->position.x = 0;
-    else if(ent->position.x > video_info->current_w - 64)
-        ent->position.x = (float)(video_info->current_w) - 64;
-
-    ent->position.y += (ent->move_direction.y * speed_scaled);
-
-    if(ent->position.y < 0)
-        ent->position.y = 0;
-    else if(ent->position.y > video_info->current_h - 64)
-        ent->position.y = (float)(video_info->current_h) - 64;
+    float scale = Ent_GET(think_interval, ent) / 1000.0f;
+    Ent_update_position(ent, scale);
+    Ent_update_rotation(ent, scale);
 }
 
 void

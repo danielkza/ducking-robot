@@ -5,6 +5,8 @@
 #include <SDL.h>
 
 #include "assets.h"
+#include "utils.h"
+
 #include "Boat.h"
 
 const ent_class_t Boat_CLASS = {
@@ -29,23 +31,12 @@ void Boat_m_destroy(Ent *ent)
 
 void Boat_m_spawn(Ent *ent)
 {
+    Ent_SET(speed, ent, 0);
+    Ent_SET(max_speed, ent, 750);
+
     Ent_CALL(think, ent);
 }
 
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#endif
-
-#ifndef max
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#endif
-
-#define clamp(a, a_min, a_max) max(min((a), (a_max)), (a_min))
-
-#define BOAT_SPRITE_ANGLE_INTERVAL 30
-#define BOAT_SPRITE_SIZE 64
-#define BOAT_SPRITE_COLS 3
-#define BOAT_ROTATION_DELAY 100
 
 static void
 Boat_update_speed(Boat *boat, const Uint8 *key_state)
@@ -66,24 +57,6 @@ Boat_update_speed(Boat *boat, const Uint8 *key_state)
     Ent_SET(speed, boat, speed);
 }
 
-static float
-angle_normalize(float angle)
-{
-    if(angle < 0)
-        angle += 360;
-    else if(angle >= 360)
-        angle -= 360;
-
-    return angle;
-}
-
-static float
-angle_round(float angle, int mod)
-{
-    float quot = angle / mod;
-    quot = floorf(quot > 0 ? (quot + 0.5) : (quot - 0.5));
-    return quot * mod;
-}
 
 static void
 Boat_update_angles(Boat *boat, const Uint8 *key_state)

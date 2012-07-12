@@ -77,6 +77,12 @@ vec2_from_angle(vec2 *dest, float angle)
     dest->y = -(float)sin(rad_angle);
 }
 
+static inline float
+vec2_to_angle(const vec2 *src)
+{
+    float angle_rad = atan2f(src->y, src->x);
+    return angle_normalize(angle_rad * 180 / M_PI);
+}
 
 static inline int
 vec2_is_null(const vec2 *src)

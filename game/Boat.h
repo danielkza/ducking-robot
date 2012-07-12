@@ -8,6 +8,11 @@
 #include "Ent.h"
 #include "VisibleEnt.h"
 
+#define BOAT_SPRITE_ANGLE_INTERVAL 30
+#define BOAT_SPRITE_SIZE 64
+#define BOAT_SPRITE_COLS 3
+#define BOAT_ROTATION_DELAY 100
+
 const ent_class_t Boat_CLASS;
 
 #define Boat_STRUCT \

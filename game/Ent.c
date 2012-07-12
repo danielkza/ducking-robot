@@ -103,8 +103,7 @@ static void
 Ent_update_position(Ent *ent, float scale)
 {
     float speed = Ent_GET(speed, ent),
-          max_speed = Ent_GET(max_speed, ent),
-          speed_scaled;
+          max_speed = Ent_GET(max_speed, ent);
     unsigned int flags = Ent_GET(flags, ent);
 
     if(max_speed >= 0) {

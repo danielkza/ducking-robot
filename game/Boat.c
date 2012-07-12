@@ -92,9 +92,13 @@ static void
 Boat_update_image(Boat *boat)
 {
     SDL_Rect rect = {0, 0, BOAT_SPRITE_SIZE, BOAT_SPRITE_SIZE};
-    int row, col;
+    int row, col, new_image_index;
 
-    int new_image_index = (int)(Ent_GET(rotation, boat) / BOAT_SPRITE_ANGLE_INTERVAL);
+    float angle = angle_normalize(Ent_GET(rotation, boat));
+    if(angle < 0)
+        angle = 360 + angle;
+
+    new_image_index = (int)(angle / BOAT_SPRITE_ANGLE_INTERVAL);
     if(new_image_index == Boat_GET(image_index, boat))
         return;
     

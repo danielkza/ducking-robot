@@ -19,6 +19,5 @@ float
 angle_round(float angle, int mod)
 {
     float quot = angle / mod;
-    quot = floorf(quot > 0 ? (quot + 0.5) : (quot - 0.5));
-    return quot * mod;
+    return (int)(quot >= 0 ? (quot + 0.5) : (quot - 0.5)) * mod;
 }

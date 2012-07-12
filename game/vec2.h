@@ -4,6 +4,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <utils.h>
+
 #ifdef _MSC_VER
 #define inline __inline
 #endif

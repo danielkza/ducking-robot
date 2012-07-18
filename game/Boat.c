@@ -23,6 +23,7 @@ void Boat_m_init(Ent *ent)
 
     ent->m_spawn = Boat_m_spawn;
     ent->m_think = Boat_m_think;
+    ent->m_touch = Boat_m_touch;
 }
 
 void Boat_m_destroy(Ent *ent)
@@ -33,7 +34,7 @@ void Boat_m_spawn(Ent *ent)
 {
     Ent_SET(speed, ent, 0);
     Ent_SET(max_speed, ent, 750);
-
+    Ent_SET(flags, ent, Ent_GET(flags, ent) | EFLAGS_VISIBLE | EFLAGS_TOUCHABLE | EFLAGS_SOLID);
     Ent_CALL(think, ent);
 }
 
@@ -56,7 +57,6 @@ Boat_update_speed(Boat *boat, const Uint8 *key_state)
 
     Ent_SET(speed, boat, speed);
 }
-
 
 static void
 Boat_update_angles(Boat *boat, const Uint8 *key_state)
@@ -109,6 +109,8 @@ Boat_update_image(Boat *boat)
 
     VisibleEnt_SET(image_rect, boat, &rect);
     Boat_SET(image_index, boat, new_image_index);
+    Ent_SET(bounds_width, boat, rect.w);
+    Ent_SET(bounds_height, boat, rect.h);
 }
 
 void Boat_m_think(Ent *ent)
@@ -121,5 +123,14 @@ void Boat_m_think(Ent *ent)
     Boat_update_image(boat);
 
     Ent_m_think((Ent*)boat);
-    Ent_SET(think_interval, boat, 1);
+    Ent_SET(think_interval, boat, 10);
 }
+
+void Boat_m_touch(Ent *ent1, Ent *ent2)
+{
+    Boat *boat = (Boat*)ent1;
+    if(Ent_GET(flags, ent2) & EFLAGS_SOLID) {
+        Ent_SET(speed, boat, 0);
+    }
+}
+

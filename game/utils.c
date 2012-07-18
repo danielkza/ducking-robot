@@ -8,7 +8,7 @@ void
 SDL_DrawRect(SDL_Surface *dest,
              const SDL_Rect *rect,
              Uint32 color,
-             int thickness);
+             int thickness)
 {
     SDL_Rect cur_line;
 

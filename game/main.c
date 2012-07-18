@@ -28,7 +28,7 @@ void systems_init()
     atexit(SDL_Quit);
     atexit(TTF_Quit);
 
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
     assets_init();
     ent_table_init();
@@ -53,7 +53,7 @@ void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL
     *background = bg_asset->surface;
     assert(*background != NULL);
 
-    font = TTF_OpenFont("C:\\Windows\\Fonts\\Arial.ttf", 24);
+    font = TTF_OpenFont("fonts/DroidSans-Bold.ttf", 24);
     assert(font != NULL);
 
     *press_enter_text = TTF_RenderText_Blended(font, "Press ENTER to start!", white);
@@ -65,7 +65,6 @@ void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL
 
 void create_entities()
 {
-    vec2 position;
     Boat *boat;
     Enemy *enemy;
 

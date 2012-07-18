@@ -4,20 +4,43 @@
 
 #include "utils.h"
 
-float
-angle_normalize(float angle)
+void
+SDL_DrawRect(SDL_Surface *dest,
+             const SDL_Rect *rect,
+             Uint32 color,
+             int thickness);
 {
-    if(angle < -180)
-        angle += 360;
-    else if(angle >= 180)
-        angle -= 360;
+    SDL_Rect cur_line;
 
-    return angle;
-}
+    // Top
+    cur_line.x = rect->x - (thickness / 2);
+    cur_line.y = rect->y - (thickness / 2);
+    cur_line.w = rect->w + thickness;
+    cur_line.h = thickness;
 
-float
-angle_round(float angle, int mod)
-{
-    float quot = angle / mod;
-    return (int)(quot >= 0 ? (quot + 0.5) : (quot - 0.5)) * mod;
+    SDL_FillRect(dest, &cur_line, color);
+    
+    // Left
+    cur_line.x = rect->x - (thickness / 2);
+    cur_line.y = rect->y - (thickness / 2);
+    cur_line.w = thickness;
+    cur_line.h = rect->h + thickness;
+
+    SDL_FillRect(dest, &cur_line, color);
+
+    // Right
+    cur_line.x = rect->x + rect->w - (thickness / 2);
+    cur_line.y = rect->y - (thickness / 2);
+    cur_line.w = thickness;
+    cur_line.h = rect->h + thickness;
+
+    SDL_FillRect(dest, &cur_line, color);
+
+    // Bottom
+    cur_line.x = rect->x - (thickness / 2);
+    cur_line.y = rect->y + rect->h - (thickness / 2);
+    cur_line.w = rect->w + thickness;
+    cur_line.h = thickness;
+
+    SDL_FillRect(dest, &cur_line, color);
 }

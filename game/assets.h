@@ -53,7 +53,8 @@ assets_init();
  * Invalidates all internal state and frees up any loaded data.
  * assets_init() must be called again after calling this function for further use.
  *
- * @warning does not do reference counting. Calling will immediately invalide all resources.
+ * @warning Does not do reference counting. Calling will immediately invalidate
+ *          all resources.
  **/
 void
 assets_shutdown();
@@ -62,8 +63,9 @@ assets_shutdown();
  * Loads an asset from a file, or if available, from a cached version instead.
  *
  * @warning Any caller trying to load the same asset will receive a shared copy.
-            DO NOT modify contents directly; create a copy of them first or you may encounter
-            unexpected behavior.
+ *          DO NOT modify contents directly; create a copy of them first or you may encounter
+ *          unexpected behavior.
+ *
  * @param type Type of asset to load from file.
  * @param file Name of the file to load from. Will be used as the key for caching.
  *

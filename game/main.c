@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <SDL.h>
 #include <SDL_main.h>
@@ -14,7 +15,9 @@
 #define FRAME_RATE_MAX 60
 
 static int started;
+static int game_over;
 static int paused;
+
 SDL_Surface *pause_text;
 
 void systems_init()
@@ -24,6 +27,8 @@ void systems_init()
     
     atexit(SDL_Quit);
     atexit(TTF_Quit);
+
+    srand(time(NULL));
 
     assets_init();
     ent_table_init();
@@ -63,6 +68,8 @@ void create_entities()
     vec2 position;
     Boat *boat;
     Enemy *enemy;
+
+    /*
     Ent *wall_top, *wall_bot, *wall_left, *wall_right;
 
     position.x = 100;
@@ -100,14 +107,21 @@ void create_entities()
     Ent_SET(bounds_width,wall_right, 1);
     Ent_SET(bounds_height, wall_right, 250);
     Ent_CALL(spawn, wall_right);
+    */
 
     boat = ENT_CREATE(Boat);
     Ent_CALL(spawn, boat);
 
     enemy = ENT_CREATE(Enemy);
-    position.x = 450;
-    position.y = 450;
-    Ent_SET(position, enemy, &position);
+    Ent_CALL(spawn, enemy);
+
+    enemy = ENT_CREATE(Enemy);
+    Ent_CALL(spawn, enemy);
+    
+    enemy = ENT_CREATE(Enemy);
+    Ent_CALL(spawn, enemy);
+    
+    enemy = ENT_CREATE(Enemy);
     Ent_CALL(spawn, enemy);
 }
 

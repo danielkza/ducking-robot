@@ -6,13 +6,17 @@
 
 #include "assets.h"
 #include "utils.h"
+#include "ent_table.h"
 
+#include "Boat.h"
 #include "Enemy.h"
 
 const ent_class_t Enemy_CLASS = {
     "Enemy", sizeof(Enemy), &VisibleEnt_CLASS,
     Enemy_m_init, Enemy_m_destroy
 };
+
+static Boat *player_boat = NULL;
 
 void Enemy_m_init(Ent *ent)
 {
@@ -35,9 +39,22 @@ void Enemy_m_destroy(Ent *ent)
 
 void Enemy_m_spawn(Ent *ent)
 {
+    const SDL_VideoInfo *video_info = SDL_GetVideoInfo();
+    vec2 position;
+
+    position.x = (float)(rand() % video_info->current_w);
+    position.y = (float)(rand() % video_info->current_h);
+    Ent_SET(position, ent, &position);
+
     Ent_SET(speed, ent, 0);
     Ent_SET(max_speed, ent, 750);
     Ent_SET(flags, ent, Ent_GET(flags, ent) | EFLAGS_VISIBLE | EFLAGS_TOUCHABLE | EFLAGS_SOLID);
+    
+    if(player_boat == NULL) {
+        const list_t *boat_iter = ent_table_next_by_class(NULL, &Boat_CLASS, 0);
+        player_boat = boat_iter->item;
+    }
+
     Ent_CALL(think, ent);
 }
 
@@ -47,12 +64,24 @@ void Enemy_m_remove(Ent *ent)
 }
 
 static void
-Enemy_update_speed(Enemy *boat)
+Enemy_update_speed_angles(Enemy *enemy)
 {
-    float speed = Ent_GET(speed, boat);
-    float scale = Ent_GET(think_interval, boat) / 1000.0f;
+    float scale = Ent_GET(think_interval, enemy) / 1000.0f;
+    const vec2 *position = Ent_GET(position, enemy);
+    float speed = Ent_GET(speed, enemy);
+    vec2 velocity = *Ent_GET(move_direction, enemy);
+    
+    vec2 player_pos = *Ent_GET(position, player_boat);
+    vec2 player_vec = player_pos;
 
-    Ent_SET(speed, boat, speed);
+    vec2_scale(&velocity, speed);
+
+    vec2_sub(&player_vec, position);
+    vec2_norm(&player_vec);
+    vec2_scale(&player_vec, max(Ent_GET(speed, enemy), 500) * 1 * scale);
+    vec2_add(&velocity, &player_vec);
+
+    Ent_SET(velocity_vec, enemy, &velocity);
 }
 
 static void
@@ -95,14 +124,13 @@ Enemy_update_image(Enemy *boat)
 
 void Enemy_m_think(Ent *ent)
 {
-    Enemy *boat = (Enemy*)ent;
+    Enemy *enemy = (Enemy*)ent;
     Uint8 *key_state = SDL_GetKeyState(NULL);
 
-    Enemy_update_speed(boat);
-    Enemy_update_angles(boat);
+    Enemy_update_speed_angles(enemy);
     
-    Ent_m_think((Ent*)boat);
-    Ent_SET(think_interval, boat, 10);
+    Ent_m_think((Ent*)enemy);
+    Ent_SET(think_interval, enemy, 10);
 }
 
 void Enemy_m_draw(VisibleEnt *ent)
@@ -115,6 +143,18 @@ void Enemy_m_touch(Ent *ent1, Ent *ent2)
 {
     Enemy *enemy = (Enemy*)ent1;
     if(Ent_GET(flags, ent2) & EFLAGS_SOLID) {
-        Ent_SET(speed, enemy, 0);
+        float dir_angle = vec2_to_angle(Ent_GET(move_direction, enemy)),
+              coll_angle;
+        vec2 enemy_pos = *Ent_GET(position, enemy),
+             coll_pos = *Ent_GET(position, ent2);
+        vec2 coll_vec = coll_pos;
+
+        vec2_sub(&coll_vec, &enemy_pos);
+        vec2_norm(&coll_vec);
+
+        coll_angle = vec2_to_angle(&coll_vec);
+
+        if(fabs(dir_angle - coll_angle) <= 90)
+            Ent_SET(speed, enemy, 0);
     }
 }

@@ -224,6 +224,10 @@ static int
 Ent_check_single_collision(Ent *ent1, Ent* ent2)
 {
     SDL_Rect intersection;
+   
+    if(ent1 == ent2)
+        return 0;
+    
     if(SDL_IntersectRects(Ent_GET(bounds_rect, ent1), Ent_GET(bounds_rect, ent2), &intersection) != 0) {
         SDL_Surface *screen = SDL_GetVideoSurface();
         SDL_DrawRect(screen, &intersection, 0xFF00FFFF, 10);
@@ -256,6 +260,7 @@ Ent_check_collisions(Ent *ent)
 {
     const list_t *ent_iter = NULL;
     int has_collided = 0;
+    
     if(!(Ent_GET(flags, ent) & EFLAGS_TOUCHABLE))
         return 0;
 

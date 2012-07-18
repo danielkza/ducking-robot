@@ -142,7 +142,19 @@ void Boat_m_touch(Ent *ent1, Ent *ent2)
 {
     Boat *boat = (Boat*)ent1;
     if(Ent_GET(flags, ent2) & EFLAGS_SOLID) {
-        Ent_SET(speed, boat, 0);
+        float dir_angle = vec2_to_angle(Ent_GET(move_direction, boat)),
+              coll_angle;
+        vec2 boat_pos = *Ent_GET(position, boat),
+             coll_pos = *Ent_GET(position, ent2);
+        vec2 coll_vec = coll_pos;
+        
+        vec2_sub(&coll_vec, &boat_pos);
+        vec2_norm(&coll_vec);
+
+        coll_angle = vec2_to_angle(&coll_vec);
+
+        if(fabs(dir_angle - coll_angle) <= 90)
+            Ent_SET(speed, boat, 0);
     }
 }
 

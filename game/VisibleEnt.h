@@ -15,7 +15,6 @@ const ent_class_t VisibleEnt_CLASS;
     \
     SDL_Surface *image; \
     SDL_Rect image_rect; \
-    int visible; \
     \
     void (*m_draw)(struct VisibleEnt *ent)
 
@@ -23,10 +22,8 @@ typedef struct VisibleEnt {
     VisibleEnt_STRUCT;
 } VisibleEnt;
 
-
-CLS_DEF_ACCESSOR(VisibleEnt, int, visible);
-
 CLS_DEF_GETTER(VisibleEnt, SDL_Surface *, image);
+
 static inline void
 VisibleEnt_set_image(VisibleEnt *ent, SDL_Surface *image)
 {
@@ -49,9 +46,11 @@ CLS_DEF_ACCESSOR_INDIRECT(VisibleEnt, SDL_Rect, image_rect);
 
 void VisibleEnt_m_init(Ent *ent);
 void VisibleEnt_m_destroy(Ent *ent);
-
-void VisibleEnt_m_on_frame(Ent *ent);
-
+void VisibleEnt_m_on_frame(Ent *ent, Uint32 last_frame_time);
 void VisibleEnt_m_draw(VisibleEnt *ent);
+
+int VisibleEnt_check_single_collision(VisibleEnt *ent1, Ent *ent2, const SDL_Rect *intersection);
+
+
 
 #endif

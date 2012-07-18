@@ -6,24 +6,11 @@
 #include <SDL.h>
 
 #include "obj_defs.h"
+#include "ent_base.h"
 #include "vec2.h"
 #include "game_time.h"
 
-typedef struct Ent Ent;
-
-typedef struct ent_class_t {
-    const char *name;
-    size_t data_size;
-    const struct ent_class_t *base;
-    void (*m_init)(Ent *ent);
-    void (*m_destroy)(Ent *ent);
-} ent_class_t;
-
-Ent *Ent_m_create(const ent_class_t *eclass);
-#define ENT_CREATE(eclass) ((eclass*)Ent_m_create(&eclass##_CLASS))
-void Ent_m_free(Ent *ent);
-#define ENT_FREE(ent) Ent_m_free((Ent*)(ent))
-
+// Ent type definitions
 
 const ent_class_t Ent_CLASS;
 
@@ -46,16 +33,28 @@ const ent_class_t Ent_CLASS;
     Uint32 prev_think; \
     Uint32 next_think; \
     \
-    void (*m_spawn) (struct Ent*); \
+    float bounds_width; \
+    float bounds_height; \
+    SDL_Rect bounds_rect; \
+    \
+    void (*m_spawn)(struct Ent*); \
     void (*m_remove)(struct Ent*); \
-    void (*m_think) (struct Ent*); \
+    void (*m_think)(struct Ent*); \
     \
-    void (*m_touch)  (struct Ent*, struct Ent*); \
+    void (*m_touch)(struct Ent*, struct Ent*); \
     \
-    void (*m_on_frame)(struct Ent *)
+    void (*m_on_frame)(struct Ent *, Uint32 last_frame_time)
 
 struct Ent {
     Ent_STRUCT;
+};
+
+enum {
+    EFLAGS_NONE = 0,
+    EFLAGS_VISIBLE   = 1<<0,
+    EFLAGS_TOUCHABLE = 1<<1,
+    EFLAGS_SOLID     = 1<<2,
+    EFLAGS_ATTACHED  = 1<<3,
 };
 
 CLS_DEF_ACCESSOR(Ent, Ent *, parent);
@@ -69,6 +68,9 @@ CLS_DEF_ACCESSOR(Ent, float, rot_speed);
 CLS_DEF_ACCESSOR(Ent, float, max_rot_speed);
 CLS_DEF_ACCESSOR(Ent, Uint32, prev_think);
 CLS_DEF_ACCESSOR(Ent, Uint32, next_think);
+CLS_DEF_ACCESSOR(Ent, float, bounds_width);
+CLS_DEF_ACCESSOR(Ent, float, bounds_height);
+CLS_DEF_ACCESSOR_INDIRECT(Ent, SDL_Rect, bounds_rect);
 
 static inline Uint32
 Ent_get_think_interval(Ent *ent)
@@ -114,6 +116,9 @@ void Ent_m_spawn(Ent *ent);
 void Ent_m_remove(Ent *ent);
 void Ent_m_think(Ent *ent);
 void Ent_m_touch(Ent *ent, Ent *ent2);
-void Ent_m_on_frame(Ent *ent);
+void Ent_m_on_frame(Ent *ent, Uint32 last_frame_time);
+
+void Ent_update_pre_frame(Ent *ent, Uint32 last_frame_time);
+void Ent_check_all_collisions();
 
 #endif

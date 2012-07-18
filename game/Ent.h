@@ -1,5 +1,11 @@
-#ifndef ENT_H
-#define ENT_H
+/**
+  * @file
+  * Ent base entity class
+  **/
+
+
+#ifndef Ent_H
+#define Ent_H
 
 #include <stddef.h>
 
@@ -43,7 +49,8 @@ const ent_class_t Ent_CLASS;
     \
     void (*m_touch)(struct Ent*, struct Ent*); \
     \
-    void (*m_on_frame)(struct Ent *, Uint32 last_frame_time)
+    void (*m_on_update)(struct Ent*); \
+    void (*m_on_frame)(struct Ent *)
 
 struct Ent {
     Ent_STRUCT;
@@ -111,14 +118,13 @@ Ent_set_velocity_vec(Ent *ent, vec2 *vel)
 
 void Ent_m_init(Ent *ent);
 void Ent_m_destroy(Ent *ent);
-
 void Ent_m_spawn(Ent *ent);
 void Ent_m_remove(Ent *ent);
 void Ent_m_think(Ent *ent);
 void Ent_m_touch(Ent *ent, Ent *ent2);
-void Ent_m_on_frame(Ent *ent, Uint32 last_frame_time);
+void Ent_m_on_update(Ent *ent);
+void Ent_m_on_frame(Ent *ent);
 
-void Ent_update_pre_frame(Ent *ent, Uint32 last_frame_time);
-void Ent_check_all_collisions();
+void Ent_update(Ent *ent, Uint32 last_frame_time);
 
 #endif

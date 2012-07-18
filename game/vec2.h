@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Vector data type.
+ **/
+
 #ifndef VEC2_H
 #define VEC2_H
 
@@ -183,7 +188,7 @@ vec2_is_null(const vec2 *src)
 static inline void
 vec2_rotate(vec2 *dest, float angle)
 {
-    double rotation_rads = angle_to_rads(rotation);
+    float rotation_rads = angle_to_rads(angle);
     dest->x += dest->x * cosf(rotation_rads);
     dest->y += dest->y * sinf(rotation_rads);
 }

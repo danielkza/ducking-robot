@@ -1,3 +1,9 @@
+/**
+  * @file
+  * Central game time keeping system
+  **/
+
+
 #ifndef GAME_TIME_H
 #define GAME_TIME_H
 

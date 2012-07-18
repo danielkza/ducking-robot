@@ -1,3 +1,8 @@
+/**
+  * @file
+  * Boat entity class
+  **/
+
 #ifndef Boat_H
 #define Boat_H
 
@@ -46,7 +51,10 @@ CLS_DEF_ACCESSOR(Boat, Uint32, last_rot_time);
 void Boat_m_init(Ent *ent);
 void Boat_m_destroy(Ent *ent);
 void Boat_m_spawn(Ent *ent);
+void Boat_m_remove(Ent *ent);
 void Boat_m_think(Ent *ent);
+void Boat_m_touch(Ent *ent1, Ent *ent2);
+void Boat_m_draw(VisibleEnt *ent);
 void Boat_m_touch(Ent *ent1, Ent *ent2);
 
 #endif

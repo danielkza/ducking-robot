@@ -46,7 +46,7 @@ CLS_DEF_ACCESSOR_INDIRECT(VisibleEnt, SDL_Rect, image_rect);
 
 void VisibleEnt_m_init(Ent *ent);
 void VisibleEnt_m_destroy(Ent *ent);
-void VisibleEnt_m_on_frame(Ent *ent, Uint32 last_frame_time);
+void VisibleEnt_m_on_frame(Ent *ent);
 void VisibleEnt_m_draw(VisibleEnt *ent);
 
 int VisibleEnt_check_single_collision(VisibleEnt *ent1, Ent *ent2, const SDL_Rect *intersection);

@@ -23,7 +23,9 @@ Ent_m_init(Ent *ent)
     ent->flags = 0;
     
     ent->position = VEC2_ZERO;
-    ent->move_direction = VEC2_ZERO;
+    ent->move_direction.x = 1;
+    ent->move_direction.y = 0;
+
     ent->speed = 0.0;
     ent->max_speed = -1.0;
     
@@ -46,6 +48,7 @@ Ent_m_init(Ent *ent)
     ent->m_remove = Ent_m_remove;
     ent->m_think = Ent_m_think;
     ent->m_touch = Ent_m_touch;
+    ent->m_on_update = Ent_m_on_update;
     ent->m_on_frame = Ent_m_on_frame;
 }
 
@@ -71,6 +74,16 @@ Ent_m_think(Ent *ent)
 
 void
 Ent_m_touch(Ent *ent, Ent *ent2)
+{
+}
+
+void
+Ent_m_on_update(Ent *ent)
+{
+}
+
+void
+Ent_m_on_frame(Ent *ent)
 {
 }
 
@@ -149,7 +162,6 @@ Ent_update_bounds(Ent *ent)
     Ent_SET(bounds_rect, ent, &bounds);
 }
 */
-
 
 static void
 Ent_update_bounds(Ent *ent)
@@ -232,47 +244,53 @@ Ent_check_single_collision(Ent *ent1, Ent* ent2)
 
         Ent_CALL(touch, ent1, ent2);
         Ent_CALL(touch, ent2, ent1);
+
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
-void
-Ent_check_all_collisions()
+static int
+Ent_check_collisions(Ent *ent)
 {
     const list_t *ent_iter = NULL;
+    int has_collided = 0;
+    if(!(Ent_GET(flags, ent) & EFLAGS_TOUCHABLE))
+        return 0;
 
     while((ent_iter = ent_table_next(ent_iter)) != NULL) {
-        Ent *ent = ent_iter->item;
-        const list_t *coll_iter = ent_iter;
-         
+        Ent *coll_ent = ent_iter->item;
+        
+        if(coll_ent == ent)
+            continue;
+
         if(!(Ent_GET(flags, ent) & EFLAGS_TOUCHABLE))
             continue;
 
-        while((coll_iter = ent_table_next(coll_iter)) != NULL) { 
-            Ent *coll_ent = coll_iter->item;
-            if(coll_ent == ent)
-                continue;
-
-            if(!(Ent_GET(flags, coll_ent) & EFLAGS_TOUCHABLE))
-                continue;
-
-            Ent_check_single_collision(ent, coll_ent);
-        }
+        if(Ent_check_single_collision(ent, coll_ent))
+            has_collided = 1;
     }
+
+    return has_collided;
 }
 
-
 void
-Ent_update_pre_frame(Ent *ent, Uint32 last_frame_time)
+Ent_update(Ent *ent, Uint32 last_frame_time)
 {
+    vec2 old_position = *Ent_GET(position, ent);
+    float old_rotation = Ent_GET(rotation, ent);
     float scale = (game_time() - last_frame_time) / 1000.0f;
+
     Ent_update_position(ent, scale);
     Ent_update_rotation(ent, scale);
     Ent_update_bounds(ent);
-}
 
-void
-Ent_m_on_frame(Ent *ent, Uint32 last_frame_time)
-{
+    if(Ent_check_collisions(ent)) {
+        Ent_SET(position, ent, &old_position);
+        Ent_SET(rotation, ent, old_rotation);
+        Ent_update_bounds(ent);
+    }
+    
+    Ent_CALL(on_update, ent);
 }

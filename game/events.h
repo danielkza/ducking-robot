@@ -1,3 +1,9 @@
+/**
+  * @file
+  * Event system
+  **/
+
+
 #ifndef EVENTS_H
 #define EVENTS_H
 

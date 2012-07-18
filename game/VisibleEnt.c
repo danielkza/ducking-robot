@@ -34,9 +34,9 @@ void VisibleEnt_m_destroy(Ent *ent)
         SDL_FreeSurface(v_ent->image);
 }
 
-void VisibleEnt_m_on_frame(Ent *ent, Uint32 frame_time)
+void VisibleEnt_m_on_frame(Ent *ent)
 {
-    Ent_m_on_frame(ent, frame_time);
+    Ent_m_on_frame(ent);
     VisibleEnt_CALL(draw, ent);
 }
 
@@ -67,8 +67,8 @@ abs_rect_to_ent_surface_rect(VisibleEnt *ent, const SDL_Rect *src, SDL_Rect *des
     const vec2 *position = Ent_GET(position, ent);
     
     // Make rectangle relative to ent position
-    result.x -= position->x;
-    result.y -= position->y;
+    result.x -= (int)position->x;
+    result.y -= (int)position->y;
 
     // Then convert relative positions to absolute positions inside the surface
     result.x += image_rect->x;

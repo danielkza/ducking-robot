@@ -16,14 +16,17 @@ const ent_class_t Boat_CLASS = {
 
 void Boat_m_init(Ent *ent)
 {
+    Boat *boat = (Boat*)ent;
     const asset_data_t *image = assets_load(ASSET_TYPE_SURFACE, "images/boat-sheet.tga");
     VisibleEnt_SET(image, ent, image->surface);
     Boat_SET(image_index, ent, -1);
     Boat_SET(last_rot_time, ent, 0);
 
-    ent->m_spawn = Boat_m_spawn;
-    ent->m_think = Boat_m_think;
-    ent->m_touch = Boat_m_touch;
+    boat->m_spawn = Boat_m_spawn;
+    boat->m_remove = Boat_m_remove;
+    boat->m_think = Boat_m_think;
+    boat->m_touch = Boat_m_touch;
+    boat->m_draw  = Boat_m_draw;
 }
 
 void Boat_m_destroy(Ent *ent)
@@ -38,6 +41,10 @@ void Boat_m_spawn(Ent *ent)
     Ent_CALL(think, ent);
 }
 
+void Boat_m_remove(Ent *ent)
+{
+    Ent_SET(flags, ent, Ent_GET(flags, ent) & ~(EFLAGS_VISIBLE | EFLAGS_TOUCHABLE | EFLAGS_SOLID));
+}
 
 static void
 Boat_update_speed(Boat *boat, const Uint8 *key_state)
@@ -120,10 +127,15 @@ void Boat_m_think(Ent *ent)
 
     Boat_update_speed(boat, key_state);
     Boat_update_angles(boat, key_state);
-    Boat_update_image(boat);
-
+    
     Ent_m_think((Ent*)boat);
     Ent_SET(think_interval, boat, 10);
+}
+
+void Boat_m_draw(VisibleEnt *ent)
+{
+    Boat_update_image((Boat*)ent);
+    VisibleEnt_m_draw(ent);
 }
 
 void Boat_m_touch(Ent *ent1, Ent *ent2)

@@ -58,8 +58,8 @@ void
 Ent_m_free(Ent *ent)
 {
     if(ent != NULL) {
-        Ent_free_destroy(ent, ent->eclass);
         ent_table_remove(ent);
+        Ent_free_destroy(ent, ent->eclass);
         free(ent);
     }
 }

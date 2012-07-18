@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Miscellaneous utilities
+ **/
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -49,6 +54,9 @@
 
 /**
  * Restricts a value to an interval.
+ *
+ * @warning Parameters should not have side effects as they will possibly be
+ *          executed multiple times
  *
  * @param a Value to check
  * @param a_min Left end of the interval

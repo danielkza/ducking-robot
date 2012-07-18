@@ -1,3 +1,8 @@
+/**
+  * @file
+  * Central entity registration system
+  **/
+
 #ifndef ENT_TABLE_H
 #define ENT_TABLE_H
 

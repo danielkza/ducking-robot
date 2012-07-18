@@ -23,7 +23,7 @@
     max(min((a), (a_max)), (a_min))
 
 static inline float
-roundf(float num)
+round_float(float num)
 {
     return (float)((int)((num >= 0) ? (num + 0.5) : (num - 0.5)));
 }
@@ -43,7 +43,7 @@ static inline float
 angle_round(float angle, int mod)
 {
     float quot = angle / mod;
-    return roundf(quot) * mod;
+    return round_float(quot) * mod;
 }
 
 static inline float 

@@ -156,11 +156,11 @@ Ent_update_bounds(Ent *ent)
 {
     SDL_Rect bounds;
     const vec2 *position = Ent_GET(position, ent);
-    int width = (int)roundf(Ent_GET(bounds_width, ent)),
-        height = (int)roundf(Ent_GET(bounds_height, ent));
+    int width = (int)round_float(Ent_GET(bounds_width, ent)),
+        height = (int)round_float(Ent_GET(bounds_height, ent));
 
-    bounds.x = (int)roundf(position->x);
-    bounds.y = (int)roundf(position->y);
+    bounds.x = (int)round_float(position->x);
+    bounds.y = (int)round_float(position->y);
     bounds.w = width;
     bounds.h = height;
 

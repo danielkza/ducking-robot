@@ -9,6 +9,7 @@
 #include "ent_table.h"
 
 #include "Boat.h"
+#include "Enemy.h"
 
 #define FRAME_RATE_MAX 60
 
@@ -61,6 +62,7 @@ void create_entities()
 {
     vec2 position;
     Boat *boat;
+    Enemy *enemy;
     Ent *wall_top, *wall_bot, *wall_left, *wall_right;
 
     position.x = 100;
@@ -101,6 +103,12 @@ void create_entities()
 
     boat = ENT_CREATE(Boat);
     Ent_CALL(spawn, boat);
+
+    enemy = ENT_CREATE(Enemy);
+    position.x = 450;
+    position.y = 450;
+    Ent_SET(position, enemy, &position);
+    Ent_CALL(spawn, enemy);
 }
 
 int check_SDL_events()
@@ -247,7 +255,6 @@ int main(int argc, char **argv)
         finish_frame(&frame_start, &frame_end, &game_frame_end);
     }
 
-done:
     systems_shutdown();
     return 0;
 }

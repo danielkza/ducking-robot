@@ -1,7 +1,10 @@
+/**
+  * @file
+  * Enemy entity class
+  **/
+
 #ifndef ENEMY_H
 #define ENEMY_H
-
-#include <assert.h>
 
 #include <SDL.h>
 
@@ -15,13 +18,13 @@
 #define ENEMY_SPRITE_SIZE 64
 /** Number of sprites in each row in the sprite sheet **/
 #define ENEMY_SPRITE_COLS 3
-/** How often, in miliseconds, to rotate the Enemy when the rotation key is
+/** How often, in miliseconds, to rotate the boat when the rotation key is
     being pressed **/
 #define ENEMY_ROTATION_DELAY 100
 
 const ent_class_t Enemy_CLASS;
 
-#define ENEMY_STRUCT \
+#define Enemy_STRUCT \
     VisibleEnt_STRUCT; \
     int image_index; \
     Uint32 last_rot_time
@@ -46,7 +49,10 @@ CLS_DEF_ACCESSOR(Enemy, Uint32, last_rot_time);
 void Enemy_m_init(Ent *ent);
 void Enemy_m_destroy(Ent *ent);
 void Enemy_m_spawn(Ent *ent);
+void Enemy_m_remove(Ent *ent);
 void Enemy_m_think(Ent *ent);
+void Enemy_m_touch(Ent *ent1, Ent *ent2);
+void Enemy_m_draw(VisibleEnt *ent);
 void Enemy_m_touch(Ent *ent1, Ent *ent2);
 
 #endif

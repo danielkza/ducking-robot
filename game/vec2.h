@@ -74,16 +74,16 @@ vec2_norm(vec2 *dest)
 static inline void
 vec2_from_angle(vec2 *dest, float angle)
 {
-    float rad_angle = (float)(angle / 180 * M_PI);
-    dest->x = (float)cos(rad_angle);
-    dest->y = -(float)sin(rad_angle);
+    float angle_rads = angle_to_rads(angle);
+    dest->x = cosf(angle_rads);
+    dest->y = -sinf(angle_rads);
 }
 
 static inline float
 vec2_to_angle(const vec2 *src)
 {
-    float angle_rad = atan2f(src->y, src->x);
-    return angle_normalize(angle_rad * 180 / M_PI);
+    float angle_rads = atan2f(src->y, src->x);
+    return angle_normalize(angle_to_degs(angle_rads));
 }
 
 static inline int
@@ -95,9 +95,9 @@ vec2_is_null(const vec2 *src)
 static inline void
 vec2_rotate(vec2 *dest, float rotation)
 {
-    double rotation_rad = rotation * M_PI / 180;
-    dest->x += (float)(dest->x * cos(rotation_rad));
-    dest->y += (float)(dest->y * sin(rotation_rad));
+    double rotation_rads = angle_to_rads(rotation);
+    dest->x += dest->x * cosf(rotation_rads);
+    dest->y += dest->y * sinf(rotation_rads);
 }
 
 #endif

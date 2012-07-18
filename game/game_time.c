@@ -16,4 +16,5 @@ Uint32
 game_time_update(Uint32 ticks)
 {
     cur_time += ticks;
+    return cur_time;
 }

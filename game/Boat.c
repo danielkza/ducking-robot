@@ -6,7 +6,9 @@
 
 #include "assets.h"
 #include "utils.h"
+#include "pause.h"
 
+#include "Enemy.h"
 #include "Boat.h"
 
 const ent_class_t Boat_CLASS = {
@@ -105,7 +107,7 @@ Boat_update_image(Boat *boat)
     if(angle < 0)
         angle = 360 + angle;
 
-    new_image_index = (int)(angle / BOAT_SPRITE_ANGLE_INTERVAL);
+    new_image_index = (int)round_float(angle / BOAT_SPRITE_ANGLE_INTERVAL);
     if(new_image_index == Boat_GET(image_index, boat))
         return;
     
@@ -142,19 +144,24 @@ void Boat_m_touch(Ent *ent1, Ent *ent2)
 {
     Boat *boat = (Boat*)ent1;
     if(Ent_GET(flags, ent2) & EFLAGS_SOLID) {
-        float dir_angle = vec2_to_angle(Ent_GET(move_direction, boat)),
-              coll_angle;
-        vec2 boat_pos = *Ent_GET(position, boat),
-             coll_pos = *Ent_GET(position, ent2);
-        vec2 coll_vec = coll_pos;
+        if(ent_class_is_subclass(ent2->eclass, &Enemy_CLASS)) {
+            set_paused(1);
+            set_game_over(1);
+        } else {
+            float dir_angle = vec2_to_angle(Ent_GET(move_direction, boat)),
+                  coll_angle;
+            vec2 boat_pos = *Ent_GET(position, boat),
+                 coll_pos = *Ent_GET(position, ent2);
+            vec2 coll_vec = coll_pos;
         
-        vec2_sub(&coll_vec, &boat_pos);
-        vec2_norm(&coll_vec);
+            vec2_sub(&coll_vec, &boat_pos);
+            vec2_norm(&coll_vec);
 
-        coll_angle = vec2_to_angle(&coll_vec);
+            coll_angle = vec2_to_angle(&coll_vec);
 
-        if(fabs(dir_angle - coll_angle) <= 90)
-            Ent_SET(speed, boat, 0);
+            if(fabs(dir_angle - coll_angle) <= 45)
+                Ent_SET(speed, boat, 0);
+        }
     }
 }
 

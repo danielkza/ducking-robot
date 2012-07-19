@@ -67,8 +67,8 @@ abs_rect_to_ent_surface_rect(VisibleEnt *ent, const SDL_Rect *src, SDL_Rect *des
     const vec2 *position = Ent_GET(position, ent);
     
     // Make rectangle relative to ent position
-    result.x -= (int)position->x;
-    result.y -= (int)position->y;
+    result.x -= (int)round_float(position->x);
+    result.y -= (int)round_float(position->y);
 
     // Then convert relative positions to absolute positions inside the surface
     result.x += image_rect->x;
@@ -82,7 +82,12 @@ abs_rect_to_ent_surface_rect(VisibleEnt *ent, const SDL_Rect *src, SDL_Rect *des
 static inline int
 SDL_IsPixelTransparent(const SDL_Surface *surface, int x, int y)
 {
-    Uint32 pixel = ((Uint32*)(surface->pixels))[y * surface->w + x];
+    Uint32 pixel;
+
+    if(x > surface->w || y > surface->h)
+        return 1;
+
+    pixel = ((Uint32*)(surface->pixels))[y * surface->w + x];
     return (pixel & surface->format->Amask) == 0;
 }
 

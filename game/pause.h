@@ -11,6 +11,6 @@ void set_paused(int pause);
 
 int is_game_over();
 void toggle_game_over();
-int set_game_over(int game_over);
+void set_game_over(int game_over);
 
 #endif

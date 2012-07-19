@@ -9,6 +9,7 @@
 
 #include "Ent.h"
 #include "VisibleEnt.h"
+#include "Enemy.h"
 
 const ent_class_t Ent_CLASS = {
     "Ent", sizeof(Ent), NULL,
@@ -291,7 +292,7 @@ Ent_update(Ent *ent, Uint32 last_frame_time)
     Ent_update_rotation(ent, scale);
     Ent_update_bounds(ent);
 
-    if(Ent_check_collisions(ent)) {
+    if(Ent_check_collisions(ent) && !ent_class_is_subclass(ent->eclass, &Enemy_CLASS)) {
         Ent_SET(position, ent, &old_position);
         Ent_SET(rotation, ent, old_rotation);
         Ent_update_bounds(ent);

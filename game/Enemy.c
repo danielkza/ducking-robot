@@ -52,7 +52,8 @@ void Enemy_m_spawn(Ent *ent)
     
     if(player_boat == NULL) {
         const list_t *boat_iter = ent_table_next_by_class(NULL, &Boat_CLASS, 0);
-        player_boat = boat_iter->item;
+        if(boat_iter != NULL)
+            player_boat = boat_iter->item;
     }
 
     Ent_CALL(think, ent);
@@ -130,6 +131,7 @@ void Enemy_m_draw(VisibleEnt *ent)
 
 void Enemy_m_touch(Ent *ent1, Ent *ent2)
 {
+    /*
     Enemy *enemy = (Enemy*)ent1;
     if(Ent_GET(flags, ent2) & EFLAGS_SOLID) {
         float dir_angle = vec2_to_angle(Ent_GET(move_direction, enemy)),
@@ -146,4 +148,5 @@ void Enemy_m_touch(Ent *ent1, Ent *ent2)
         if(fabs(dir_angle - coll_angle) <= 45)
             Ent_SET(speed, enemy, 0);
     }
+    */
 }

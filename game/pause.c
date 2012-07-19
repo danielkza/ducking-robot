@@ -43,7 +43,7 @@ void toggle_game_over()
     game_over = !game_over;
 }
 
-int set_game_over(int val)
+void set_game_over(int val)
 {
     game_over = (val != 0);
 }

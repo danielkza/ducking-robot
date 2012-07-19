@@ -23,7 +23,11 @@ ent_table_shutdown()
     Ent *ent;
 
     list_for_each_item(ent_list, iter, ent) {
-        ENT_FREE(ent);
+        // ENT_FREE() tries to remove entities from the table, which wouldn't
+        // make sense when we are destroying the table!
+
+        Ent_destroy(ent, ent->eclass);
+        free(ent);
     }
 
     list_free(ent_list);

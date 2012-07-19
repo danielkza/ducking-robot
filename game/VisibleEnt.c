@@ -56,7 +56,7 @@ void VisibleEnt_m_draw(VisibleEnt *ent)
 
     screen = SDL_GetVideoSurface();
     SDL_BlitSurface(image, &ent->image_rect, screen, &dest);
-    SDL_DrawRect(screen, Ent_GET(bounds_rect, ent), 0xFFFFFFFF, 1);
+    //SDL_DrawRect(screen, Ent_GET(bounds_rect, ent), 0xFFFFFFFF, 1);
 }
 
 static void

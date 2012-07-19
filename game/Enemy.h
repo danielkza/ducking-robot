@@ -20,7 +20,6 @@
 #define ENEMY_SPRITE_COLS 3
 /** How often, in miliseconds, to rotate the boat when the rotation key is
     being pressed **/
-#define ENEMY_ROTATION_DELAY 100
 
 const ent_class_t Enemy_CLASS;
 

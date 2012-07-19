@@ -8,15 +8,12 @@
 
 #include "assets.h"
 #include "ent_table.h"
+#include "pause.h"
 
 #include "Boat.h"
 #include "Enemy.h"
 
 #define FRAME_RATE_MAX 60
-
-static int started;
-static int game_over;
-static int paused;
 
 SDL_Surface *pause_text;
 
@@ -33,8 +30,9 @@ void systems_init()
     assets_init();
     ent_table_init();
 
-    started = 0;
-    paused = 1;
+    set_started(0);
+    set_game_over(0);
+    set_paused(1);
 }
 
 void systems_shutdown()
@@ -43,7 +41,7 @@ void systems_shutdown()
     assets_shutdown();
 }
 
-void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL_Surface **background)
+void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL_Surface **game_over_text, SDL_Surface **background)
 {
     const asset_data_t *bg_asset;
     TTF_Font *font;
@@ -61,6 +59,11 @@ void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL
     
     *pause_text = TTF_RenderText_Blended(font, "PAUSE", white);
     assert(*pause_text != NULL);
+
+    *game_over_text = TTF_RenderText_Blended(font, "GAME\nOVER", white);
+    assert(*game_over_text != NULL);
+
+    TTF_CloseFont(font);
 }
 
 void create_entities()
@@ -114,14 +117,14 @@ void create_entities()
     enemy = ENT_CREATE(Enemy);
     Ent_CALL(spawn, enemy);
 
-    enemy = ENT_CREATE(Enemy);
-    Ent_CALL(spawn, enemy);
+    //enemy = ENT_CREATE(Enemy);
+    //Ent_CALL(spawn, enemy);
     
-    enemy = ENT_CREATE(Enemy);
-    Ent_CALL(spawn, enemy);
+    //enemy = ENT_CREATE(Enemy);
+    //Ent_CALL(spawn, enemy);
     
-    enemy = ENT_CREATE(Enemy);
-    Ent_CALL(spawn, enemy);
+    //enemy = ENT_CREATE(Enemy);
+    //Ent_CALL(spawn, enemy);
 }
 
 int check_SDL_events()
@@ -134,10 +137,19 @@ int check_SDL_events()
             if(event.key.keysym.sym == SDLK_ESCAPE)
                 return 1;
             else if(event.key.keysym.sym == SDLK_RETURN) {
-                if(paused && !started)
-                    started = 1;
+                if(is_paused()) {
+                    if(!is_started()) {
+                        set_started(1);
+                    }
+                    else if(is_game_over()) {
+                        set_game_over(0);
+                        ent_table_shutdown();
+                        ent_table_init();
+                        create_entities();
+                    }
+                }
 
-                paused = !paused;
+                toggle_paused();
             }
         }
     }
@@ -184,7 +196,7 @@ update_entities(Uint32 last_frame_time)
      * -Third stage: call frame callbacks, which check collisions and draw to surface
      */
 
-    if(!paused) {    
+    if(!is_paused()) {    
         while((ent_iter = ent_table_next(ent_iter)) != NULL) {
             Ent *ent = ent_iter->item;
             if(game_time() >= Ent_GET(next_think, ent))
@@ -207,7 +219,7 @@ void
 start_frame(Uint32 *frame_start, Uint32 *frame_end)
 {
     *frame_start = SDL_GetTicks();
-    if(!paused)
+    if(!is_paused())
         game_time_update(*frame_start - *frame_end);
 }
 
@@ -223,7 +235,7 @@ finish_frame(Uint32 *frame_start, Uint32 *frame_end, Uint32 *game_frame_end)
         delay -= elapsed;
 
     *frame_end = SDL_GetTicks();
-    if(!paused) {
+    if(!is_paused()) {
         game_time_update(elapsed);
         *game_frame_end = game_time();
     }
@@ -233,7 +245,9 @@ finish_frame(Uint32 *frame_start, Uint32 *frame_end, Uint32 *game_frame_end)
 
 int main(int argc, char **argv)
 {
-    SDL_Surface *screen, *background, *pause_text, *press_enter_text;
+    SDL_Surface *screen, *background,
+                *pause_text, *press_enter_text, *game_over_text;
+
     const SDL_VideoInfo *video_info;
     Uint32 frame_start, frame_end = 0, game_frame_end = 0;
 
@@ -242,7 +256,7 @@ int main(int argc, char **argv)
     screen = SDL_SetVideoMode(800, 600, 0, SDL_HWSURFACE|SDL_DOUBLEBUF);
     video_info = SDL_GetVideoInfo();
     
-    create_images(&press_enter_text, &pause_text, &background);
+    create_images(&press_enter_text, &pause_text, &game_over_text, &background);
     create_entities();
  
     for(;;) {
@@ -253,10 +267,12 @@ int main(int argc, char **argv)
 
         draw_background(background, screen, video_info);
 
-        update_entities(game_frame_end);
+        update_entities(game_frame_end  );
 
-        if(paused) {
-            if(started) {
+        if(is_paused()) {
+            if(is_game_over()) {
+                draw_centered(screen, video_info, game_over_text);
+            } else if(is_started()) {
                 draw_centered(screen, video_info, pause_text);
             } else {
                 draw_centered(screen, video_info, press_enter_text);
@@ -267,6 +283,10 @@ int main(int argc, char **argv)
 
         finish_frame(&frame_start, &frame_end, &game_frame_end);
     }
+
+    SDL_FreeSurface(background);
+    SDL_FreeSurface(pause_text);
+    SDL_FreeSurface(press_enter_text);
 
     systems_shutdown();
     return 0;

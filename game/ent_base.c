@@ -45,13 +45,13 @@ Ent_m_create(const ent_class_t *eclass)
     return ent;
 }
 
-static void
-Ent_free_destroy(Ent *ent, const ent_class_t *eclass)
+void
+Ent_destroy(Ent *ent, const ent_class_t *eclass)
 {
     (*eclass->m_destroy)(ent);
 
     if(eclass->base != NULL)
-        Ent_free_destroy(ent, eclass->base);
+        Ent_destroy(ent, eclass->base);
 }
 
 void
@@ -59,7 +59,7 @@ Ent_m_free(Ent *ent)
 {
     if(ent != NULL) {
         ent_table_remove(ent);
-        Ent_free_destroy(ent, ent->eclass);
+        Ent_destroy(ent, ent->eclass);
         free(ent);
     }
 }

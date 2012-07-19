@@ -59,7 +59,18 @@ Ent
     ((eclass*)Ent_m_create(&eclass##_CLASS))
 
 /**
- * Destroys an entity, calling all its destructors and deallocating its memory.
+ * Destroys an entity, calling all its destructors.
+ * Does NOT free memory or remove entity from ent table.
+ *
+ * @param ent    Entity to destroy
+ * @param eclass Pointer to class of the entity to destroy
+ **/
+void
+Ent_destroy(Ent *ent, const ent_class_t *eclass);
+
+/**
+ * Destroys an entity, calling all its destructors, deallocating its memory
+ * and removes it from the entity table.
  *
  * @param ent Entity to free
  **/

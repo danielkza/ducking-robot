@@ -93,9 +93,9 @@ round_float(float num)
 static inline float
 angle_normalize(float angle)
 {
-    if(angle < -180)
+    while(angle < -180)
         angle += 360;
-    else if(angle >= 180)
+    while(angle >= 180)
         angle -= 360;
 
     return angle;

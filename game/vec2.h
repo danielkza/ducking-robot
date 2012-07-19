@@ -160,7 +160,7 @@ vec2_from_angle(vec2 *dest, float angle)
 static inline float
 vec2_to_angle(const vec2 *src)
 {
-    float angle_rads = atan2f(src->y, src->x);
+    float angle_rads = atan2f(-src->y, src->x);
     return angle_normalize(angle_to_degs(angle_rads));
 }
 

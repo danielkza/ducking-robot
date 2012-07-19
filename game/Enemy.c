@@ -78,37 +78,26 @@ Enemy_update_speed_angles(Enemy *enemy)
 
     vec2_sub(&player_vec, position);
     vec2_norm(&player_vec);
+
     vec2_scale(&player_vec, max(Ent_GET(speed, enemy), 500) * 1 * scale);
     vec2_add(&velocity, &player_vec);
-
+    
+    Ent_SET(rotation, enemy, vec2_to_angle(&velocity));
     Ent_SET(velocity_vec, enemy, &velocity);
 }
 
 static void
-Enemy_update_angles(Enemy *boat)
-{
-    float angle = Ent_GET(rotation, boat);
-    vec2 move_direction = {0, 0};
- 
-    angle = angle_normalize(angle_round(angle, ENEMY_SPRITE_ANGLE_INTERVAL));
-    Ent_SET(rotation, boat, angle);
-
-    vec2_from_angle(&move_direction, angle);
-    Ent_SET(move_direction, boat, &move_direction);
-}
-
-static void
-Enemy_update_image(Enemy *boat)
+Enemy_update_image(Enemy *enemy)
 {
     SDL_Rect rect = {0, 0, ENEMY_SPRITE_SIZE, ENEMY_SPRITE_SIZE};
     int row, col, new_image_index;
 
-    float angle = angle_normalize(Ent_GET(rotation, boat));
+    float angle = angle_normalize(Ent_GET(rotation, enemy));
     if(angle < 0)
         angle = 360 + angle;
 
-    new_image_index = (int)(angle / ENEMY_SPRITE_ANGLE_INTERVAL);
-    if(new_image_index == Enemy_GET(image_index, boat))
+    new_image_index = (int)round_float(angle / ENEMY_SPRITE_ANGLE_INTERVAL);
+    if(new_image_index == Enemy_GET(image_index, enemy))
         return;
     
     row = new_image_index / ENEMY_SPRITE_COLS;
@@ -116,10 +105,10 @@ Enemy_update_image(Enemy *boat)
     rect.x = col * ENEMY_SPRITE_SIZE;
     rect.y = row * ENEMY_SPRITE_SIZE;
 
-    VisibleEnt_SET(image_rect, boat, &rect);
-    Enemy_SET(image_index, boat, new_image_index);
-    Ent_SET(bounds_width, boat, rect.w);
-    Ent_SET(bounds_height, boat, rect.h);
+    VisibleEnt_SET(image_rect, enemy, &rect);
+    Enemy_SET(image_index, enemy, new_image_index);
+    Ent_SET(bounds_width, enemy, rect.w);
+    Ent_SET(bounds_height, enemy, rect.h);
 }
 
 void Enemy_m_think(Ent *ent)
@@ -154,7 +143,7 @@ void Enemy_m_touch(Ent *ent1, Ent *ent2)
 
         coll_angle = vec2_to_angle(&coll_vec);
 
-        if(fabs(dir_angle - coll_angle) <= 90)
+        if(fabs(dir_angle - coll_angle) <= 45)
             Ent_SET(speed, enemy, 0);
     }
 }

@@ -68,63 +68,68 @@ void create_images(SDL_Surface **press_enter_text, SDL_Surface **pause_text, SDL
 
 void create_entities()
 {
+    vec2 position;
+    const SDL_VideoInfo *video_info = SDL_GetVideoInfo();
+ 
     Boat *boat;
     Enemy *enemy;
-
-    /*
     Ent *wall_top, *wall_bot, *wall_left, *wall_right;
 
-    position.x = 100;
-    position.y = 100;
+    position.x = 0;
+    position.y = 0;
     wall_top = ENT_CREATE(Ent);
     Ent_SET(flags, wall_top, EFLAGS_TOUCHABLE | EFLAGS_SOLID);
     Ent_SET(position, wall_top, &position);
-    Ent_SET(bounds_width, wall_top, 250);
+    Ent_SET(bounds_width, wall_top, (float)video_info->current_w);
     Ent_SET(bounds_height, wall_top, 1);
     Ent_CALL(spawn, wall_top);
     
-    position.x = 100;
-    position.y = 350;
+    position.x = 0;
+    position.y = (float)(video_info->current_h - 1);
     wall_bot = ENT_CREATE(Ent);
     Ent_SET(flags, wall_bot, EFLAGS_TOUCHABLE | EFLAGS_SOLID);
     Ent_SET(position, wall_bot, &position);
-    Ent_SET(bounds_width, wall_bot, 250);
+    Ent_SET(bounds_width, wall_bot, (float)video_info->current_w);
     Ent_SET(bounds_height, wall_bot, 1);
     Ent_CALL(spawn, wall_bot);
 
-    position.x = 100;
-    position.y = 100;
+    position.x = 0;
+    position.y = 0;
     wall_left = ENT_CREATE(Ent);
     Ent_SET(flags, wall_left, EFLAGS_TOUCHABLE | EFLAGS_SOLID);
     Ent_SET(position, wall_left, &position);
     Ent_SET(bounds_width, wall_left, 1);
-    Ent_SET(bounds_height, wall_left, 250);
+    Ent_SET(bounds_height, wall_left, (float)video_info->current_h);
     Ent_CALL(spawn, wall_left);
 
-    position.x = 350;
-    position.y = 100;
+    position.x = (float)(video_info->current_w - 1);
+    position.y = 0;
     wall_right = ENT_CREATE(Ent);
     Ent_SET(flags, wall_right, EFLAGS_TOUCHABLE | EFLAGS_SOLID);
     Ent_SET(position, wall_right, &position);
     Ent_SET(bounds_width,wall_right, 1);
-    Ent_SET(bounds_height, wall_right, 250);
+    Ent_SET(bounds_height, wall_right, (float)video_info->current_h);
     Ent_CALL(spawn, wall_right);
-    */
-
+    
+    
+    position.x = (float)(video_info->current_w / 2);
+    position.y = (float)(video_info->current_h / 2);
+    
     boat = ENT_CREATE(Boat);
+    Ent_SET(position, boat, &position);
     Ent_CALL(spawn, boat);
 
     enemy = ENT_CREATE(Enemy);
     Ent_CALL(spawn, enemy);
 
-    //enemy = ENT_CREATE(Enemy);
-    //Ent_CALL(spawn, enemy);
+    enemy = ENT_CREATE(Enemy);
+    Ent_CALL(spawn, enemy);
     
-    //enemy = ENT_CREATE(Enemy);
-    //Ent_CALL(spawn, enemy);
+    enemy = ENT_CREATE(Enemy);
+    Ent_CALL(spawn, enemy);
     
-    //enemy = ENT_CREATE(Enemy);
-    //Ent_CALL(spawn, enemy);
+    enemy = ENT_CREATE(Enemy);
+    Ent_CALL(spawn, enemy);
 }
 
 int check_SDL_events()

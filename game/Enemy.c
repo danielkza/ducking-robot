@@ -74,12 +74,12 @@ Enemy_update_speed_angles(Enemy *enemy)
     vec2 player_pos = *Ent_GET(position, player_boat);
     vec2 player_vec = player_pos;
 
-    vec2_scale(&velocity, speed);
+    vec2_scale(&velocity, speed - (250 * scale));
 
     vec2_sub(&player_vec, position);
     vec2_norm(&player_vec);
 
-    vec2_scale(&player_vec, max(Ent_GET(speed, enemy), 500) * 1 * scale);
+    vec2_scale(&player_vec, 500 * scale);
     vec2_add(&velocity, &player_vec);
     
     Ent_SET(rotation, enemy, vec2_to_angle(&velocity));
@@ -94,7 +94,7 @@ Enemy_update_image(Enemy *enemy)
 
     float angle = angle_normalize(Ent_GET(rotation, enemy));
     if(angle < 0)
-        angle = 360 + angle;
+        angle += 360;
 
     new_image_index = (int)round_float(angle / ENEMY_SPRITE_ANGLE_INTERVAL);
     if(new_image_index == Enemy_GET(image_index, enemy))

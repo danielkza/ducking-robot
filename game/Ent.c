@@ -230,7 +230,7 @@ Ent_check_single_collision(Ent *ent1, Ent* ent2)
     
     if(SDL_IntersectRects(Ent_GET(bounds_rect, ent1), Ent_GET(bounds_rect, ent2), &intersection) != 0) {
         SDL_Surface *screen = SDL_GetVideoSurface();
-        SDL_DrawRect(screen, &intersection, 0xFF00FFFF, 10);
+        //SDL_DrawRect(screen, &intersection, 0xFF00FFFF, 10);
         
         if(ent_class_is_subclass(ent1->eclass, &VisibleEnt_CLASS)) {
             if(!VisibleEnt_check_single_collision((VisibleEnt*)ent1, ent2,
